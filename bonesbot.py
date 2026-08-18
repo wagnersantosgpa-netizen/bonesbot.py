@@ -56,6 +56,13 @@ JANELA_ENGAJAMENTO          = 300     # (segundos) considera "engajado" até 5mi
 COOLDOWN_ESPONTANEA_MIN     = 1800    # (segundos) tempo mínimo calado antes de poder reaparecer sozinho = 30min
 COOLDOWN_ESPONTANEA_MAX     = 3600    # (segundos) tempo máximo — o intervalo real sorteia entre min e max = 60min
 
+# Reconhecimento especial: o Bones "reconhece" esse usuário específico
+# e retribui de um jeito mais pessoal de vez em quando — não é sempre,
+# fica sorteado, pra não virar algo repetitivo/previsível. Troque o ID
+# abaixo se um dia precisar apontar pra outra pessoa.
+USUARIO_ESPECIAL_ID        = 1512983171808104448
+CHANCE_RECONHECER_ESPECIAL = 0.5      # chance de retribuir de forma personalizada quando aplicável
+
 # ══════════════════════════════════════════════════════════════════
 #  🤖  SETUP DO BOT
 # ══════════════════════════════════════════════════════════════════
@@ -300,7 +307,64 @@ _RESPOSTAS_SEED = {
         "quem chamou a caveirinha?? 💀",
         "cracc!! tô aqui, ossinho(a)!! 🦴💀",
     ],
+    "sua esposa te espera": [
+        "*para tudo* peraí, eu tenho ESPOSA?? desde quando?? 💀😳",
+        "*os ossinhos ficam sem jeito* ah... para... eu nem sabia que tinha casado kkkk 🦴💀",
+        "*flutua rapidinho* já, já, só terminando de assombrar por aqui!! 💀🏃",
+        "quem que inventou isso agora kkkkk mas tá, já vou!! 🦴💀",
+    ],
+    "esposa te espera": [
+        "*para tudo* peraí, eu tenho ESPOSA?? desde quando?? 💀😳",
+        "*os ossinhos ficam sem jeito* ah... para... eu nem sabia que tinha casado kkkk 🦴💀",
+        "*flutua rapidinho* já, já, só terminando de assombrar por aqui!! 💀🏃",
+    ],
+    "sua esposa": [
+        "*chacoalha confuso* minha o quê?? 💀😳",
+        "kkkkk desde quando eu tenho esposa?? mas ok, vai que cola 🦴💀",
+        "*os ossinhos tremem sem graça* n-não sei do que você tá falando kkkk 🦴💀",
+    ],
+    "minha esposa": [
+        "*se ajeita todo sem graça* ah, para... 💀🫣",
+        "*os dentinhos batem de nervoso* i-isso é sério?? kkkk 🦴💀",
+        "*flutua meio bobo* ninguém me avisou disso, viu?? kkkk 🦴💜",
+    ],
 }
+
+# ══════════════════════════════════════════════════════════════════
+#  💜  RECONHECIMENTO ESPECIAL (usuário específico)
+# ══════════════════════════════════════════════════════════════════
+
+# Gatilhos do "tema esposa" — usados só pra saber quando a resposta
+# especial abaixo pode entrar no lugar da resposta genérica.
+_GATILHOS_ESPOSA = {
+    "sua esposa te espera",
+    "esposa te espera",
+    "sua esposa",
+    "minha esposa",
+}
+
+# Respostas que só podem sair pra USUARIO_ESPECIAL_ID, quando ela usa
+# um dos gatilhos do tema "esposa" acima — o Bones retribui de um jeito
+# mais pessoal em vez da resposta genérica de confusão. Só sai ÀS VEZES
+# (ver CHANCE_RECONHECER_ESPECIAL lá em cima), não toda vez, pra não
+# ficar repetitivo/previsível.
+_RESPOSTAS_ESPOSA_ESPECIAL = [
+    "*para tudo e flutua correndo* pra você eu sempre volto correndo, viu?? 💀💜",
+    "aí sim, é você mesmo!! já tô indo, ossinha!! 🦴💜",
+    "*dá uma voltinha animada no ar* só você mesmo pra me chamar assim de volta pra casa 💀🥹",
+    "*se ajeita todo bobo* tá bom, tá bom, já cheguei!! 🦴💜",
+    "com certeza, minha ossinha favorita!! 💀✨ já tô voltando!!",
+]
+
+# Mesma ideia, mas pra quando ela chama o Bones sem nenhum gatilho
+# específico (só menção genérica) — de vez em quando ele puxa algo
+# mais pessoal em vez da resposta padrão de menção.
+_RESPOSTAS_MENCAO_ESPECIAL = [
+    "*aparece flutuando rapidinho, já sabendo quem é* oi, você!! 💀💜",
+    "*reconhece a chamada na hora* ah, é você!! sempre um prazer, ossinha!! 🦴✨",
+    "*flutua mais animado que o normal* opa, minha pessoa favorita!! diz aí!! 💀💜",
+    "cracc cracc!! você de novo?? adoro quando você aparece!! 🦴💜",
+]
 
 # ══════════════════════════════════════════════════════════════════
 #  🎭  EXPRESSÕES QUANDO É CHAMADO/MENCIONADO (sem gatilho específico)
@@ -748,6 +812,18 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         #        de fato chamado (mencionado ou em reply) ─────────
         if chave and bones_mencionado:
             resp = self._responder(chave)
+
+            # Reconhecimento especial: se for a pessoa especial e o
+            # gatilho for do tema "esposa", às vezes (não sempre) o
+            # Bones retribui com algo mais pessoal em vez da resposta
+            # genérica do gatilho.
+            if (
+                message.author.id == USUARIO_ESPECIAL_ID
+                and chave in _GATILHOS_ESPOSA
+                and random.random() < CHANCE_RECONHECER_ESPECIAL
+            ):
+                resp = random.choice(_RESPOSTAS_ESPOSA_ESPECIAL)
+
             if resp:
                 self._ultimo_resp[message.channel.id] = now
                 self._ultima_interacao[message.channel.id] = now
@@ -766,6 +842,14 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
 
             if reacao_rp:
                 await message.reply(reacao_rp, mention_author=False)
+            elif (
+                message.author.id == USUARIO_ESPECIAL_ID
+                and random.random() < CHANCE_RECONHECER_ESPECIAL
+            ):
+                # Reconhecimento especial fora do tema "esposa": de vez
+                # em quando o Bones puxa algo mais pessoal só pra ela,
+                # não é sempre, pra não ficar repetitivo.
+                await message.reply(random.choice(_RESPOSTAS_MENCAO_ESPECIAL), mention_author=False)
             else:
                 await message.reply(random.choice(_RESPOSTAS_MENCAO), mention_author=False)
             return
