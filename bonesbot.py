@@ -16,13 +16,14 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
+import re
 import json
 import random
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
 load_dotenv()
-#
+
 # ══════════════════════════════════════════════════════════════════
 #  ⚙️  CONFIGURAÇÕES GERAIS
 # ══════════════════════════════════════════════════════════════════
@@ -262,6 +263,95 @@ _RESPOSTAS_MENCAO = [
 ]
 
 # ══════════════════════════════════════════════════════════════════
+#  🎬  REAÇÕES A AÇÕES DE RP (tipo "Bones morde o vilão")
+# ══════════════════════════════════════════════════════════════════
+
+# Quando alguém escreve "Bones <verbo> <alvo>" (estilo RP/ação), o Bones
+# reage de acordo com o verbo. {alvo} é substituído pelo resto da frase.
+_REACOES_RP = {
+    "morde": [
+        "*crava os dentinhos de osso em {alvo}* CRACK!! toma essa!! 🦴😈",
+        "*morde {alvo} sem dó* AUUU... quer dizer, CRACK CRACK!! 💀🦴",
+        "*abre a mandíbula e morde {alvo}* rá, bem feito!! 😈💀",
+    ],
+    "abraça": [
+        "*envolve {alvo} num abraço de ossinhos* awwn!! 🦴🥹",
+        "*abraça {alvo} apertado, os ossos rangendo de carinho* 💀💕",
+        "*puxa {alvo} pra um abraço caloroso (e ossudo)* 🦴🤗",
+    ],
+    "beija": [
+        "*dá um beijo de caveira em {alvo}* mwah!! cuidado com os dentinhos!! 💀😘",
+        "*beija {alvo} de leve* 💀💋",
+    ],
+    "chuta": [
+        "*dá um chutinho de osso em {alvo}* toma!! 🦴💥",
+        "*chuta {alvo} com a canela de osso* PLOFT!! 💀🦴",
+    ],
+    "ataca": [
+        "*avança sobre {alvo} chacoalhando os ossos* ATAQUEEE!! 💀⚔️",
+        "*pula em cima de {alvo}* rá, se ferrou!! 🦴😈",
+        "*investe contra {alvo} com tudo* CRACK CRACK!! 💀🦴",
+    ],
+    "cutuca": [
+        "*cutuca {alvo} com o dedinho de osso* toc toc!! 🦴👀",
+        "*fica cutucando {alvo} sem parar* toc toc toc!! 💀😆",
+    ],
+    "belisca": [
+        "*belisca {alvo} de leve* ai, mentira, eu nem tenho carne pra beliscar!! kkkk 💀🦴",
+    ],
+    "empurra": [
+        "*empurra {alvo} de leve* opa, sai da frente!! 🦴😆",
+        "*dá um empurrãozinho em {alvo}* eita, com força não!! 💀",
+    ],
+    "ignora": [
+        "*vira a caveira pro outro lado, ignorando {alvo}* 💀🙄",
+        "*finge que não viu {alvo}* ... 👀💀",
+    ],
+    "acorda": [
+        "*abre um olho da órbita vazia* hm?? já?? tá bom, acordei!! 😴💀",
+        "*se espreguiça todo desconjuntado* ain, {alvo}, deixa eu dormir mais um pouco!! 💀😴",
+    ],
+    "chama": [
+        "*aparece flutuando na hora* presente!! quem chamou?? 💀🦴",
+    ],
+    "bate": [
+        "*leva a batida e os ossos chacoalham todos* AI!! (bom, sou só osso, não dói tanto) 💀😂",
+    ],
+    "assusta": [
+        "*se assusta e os ossinhos voam pro alto* AAAAH!! 😱💀🦴",
+        "*pula de susto, quase se desmonta* eita, {alvo}, quase me tirou um osso do lugar!! 💀😱",
+    ],
+    "rouba": [
+        "*esconde os ossinhos rapidinho* ei, isso é meu, {alvo}!! 🦴😤",
+    ],
+    "brinca": [
+        "*sacode animado, pronto pra brincar* eba, bora brincar!! 🦴✨",
+    ],
+    "foge": [
+        "*sai flutuando rapidinho, os ossos voando pra trás* AAAH TCHAU!! 👻💀",
+        "*foge de {alvo} chacoalhando todo* CRACK CRACK CORRE!! 🦴💨",
+    ],
+    "protege": [
+        "*se põe na frente de {alvo}, escudo de osso ativado* pode vir, eu seguro!! 🦴🛡️",
+    ],
+    "cura": [
+        "*balança os ossinhos numa dancinha mágica em cima de {alvo}* fica bom logo!! 🦴✨💫",
+    ],
+}
+
+# Reações genéricas pra qualquer verbo que não esteja no dicionário acima —
+# assim o Bones sempre reage a uma ação, mesmo que não reconheça o verbo.
+_REACOES_RP_GENERICA = [
+    "*entra na brincadeira mesmo sem entender direito a ação* 💀✨",
+    "*balança os ossinhos, participando da cena* 🦴😄",
+    "*reage do jeito que dá, sendo só um monte de osso* 💀🦴",
+    "*se mexe desengonçado tentando acompanhar* 🦴😅",
+]
+
+# Reconhece mensagens no formato "Bones <verbo> <resto>" (RP de ação)
+_PADRAO_ACAO_RP = re.compile(r"^bones\s+(\S+)\s*(.*)$", re.IGNORECASE)
+
+# ══════════════════════════════════════════════════════════════════
 #  🌫️  EXPRESSÕES ESPONTÂNEAS (aparece do nada, sem ser chamado)
 # ══════════════════════════════════════════════════════════════════
 
@@ -369,6 +459,16 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         ultimo = self._ultimo_resp.get(channel_id)
         return bool(ultimo and (now - ultimo).total_seconds() < COOLDOWN_RESPOSTA)
 
+    def _detectar_reacao_rp(self, texto: str) -> str | None:
+        """Detecta mensagens tipo 'Bones morde o vilão' e monta a reação."""
+        m = _PADRAO_ACAO_RP.match(texto.strip())
+        if not m:
+            return None
+        verbo = m.group(1).lower().strip(".,!?*")
+        alvo = m.group(2).strip(" .,!?*") or "você"
+        pool = _REACOES_RP.get(verbo, _REACOES_RP_GENERICA)
+        return random.choice(pool).format(alvo=alvo)
+
     # ── Evento principal: aqui o Bones "vive" no chat ──
 
     @commands.Cog.listener()
@@ -409,7 +509,12 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
             self._ultima_interacao[message.channel.id] = now
             async with message.channel.typing():
                 await asyncio.sleep(random.uniform(0.5, 1.2))
-            await message.reply(random.choice(_RESPOSTAS_MENCAO), mention_author=False)
+
+            reacao_rp = self._detectar_reacao_rp(message.content)
+            if reacao_rp:
+                await message.reply(reacao_rp, mention_author=False)
+            else:
+                await message.reply(random.choice(_RESPOSTAS_MENCAO), mention_author=False)
             return
 
         # ── 3) Ninguém chamou, sem gatilho: chance de o Bones
