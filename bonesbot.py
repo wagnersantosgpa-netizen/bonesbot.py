@@ -38,8 +38,15 @@ DIALOGO_FILE = "bones_dialogo.json"
 # Cooldown de resposta por canal (evita o Bones spamar)
 COOLDOWN_RESPOSTA = 3          # segundos
 CHANCE_GATILHO_SEM_CHAMAR = 0.30   # chance de responder gatilho mesmo sem ser chamado
-CHANCE_ESPONTANEA = 0.015          # chance de aparecer do nada (por mensagem)
-COOLDOWN_ESPONTANEA = 60           # só aparece do nada se fizer +60s calado no canal
+
+# Aparição espontânea ("aparece do nada") — tempo variável, não fixo,
+# pra não ficar previsível tipo relógio. E se a galera andou interagindo
+# bastante com o Bones há pouco, a chance de ele reaparecer sozinho sobe.
+CHANCE_ESPONTANEA_BASE      = 0.008   # chance normal, por mensagem, sem engajamento recente
+CHANCE_ESPONTANEA_ENGAJADO  = 0.03    # chance quando teve interação direta há pouco tempo
+JANELA_ENGAJAMENTO          = 300     # (segundos) considera "engajado" até 5min após a última interação
+COOLDOWN_ESPONTANEA_MIN     = 180     # (segundos) tempo mínimo calado antes de poder reaparecer sozinho
+COOLDOWN_ESPONTANEA_MAX     = 900     # (segundos) tempo máximo — o intervalo real sorteia entre min e max
 
 # ══════════════════════════════════════════════════════════════════
 #  🤖  SETUP DO BOT
@@ -290,6 +297,9 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
 
         # Cooldown de resposta por canal
         self._ultimo_resp: dict[int, datetime] = {}
+        # Última vez que alguém interagiu diretamente com o Bones em cada canal
+        # (gatilho respondido ou menção) — usado pra saber se o canal tá "engajado"
+        self._ultima_interacao: dict[int, datetime] = {}
 
     # ── Helpers internos ──────────────────────────────
 
@@ -340,6 +350,7 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
             resp = self._responder(chave)
             if resp:
                 self._ultimo_resp[message.channel.id] = now
+                self._ultima_interacao[message.channel.id] = now
                 async with message.channel.typing():
                     await asyncio.sleep(random.uniform(0.8, 1.8))
                 await message.reply(resp, mention_author=False)
@@ -348,19 +359,28 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         # ── 2) Foi chamado mas sem gatilho específico ───────
         if bones_mencionado and not chave:
             self._ultimo_resp[message.channel.id] = now
+            self._ultima_interacao[message.channel.id] = now
             async with message.channel.typing():
                 await asyncio.sleep(random.uniform(0.5, 1.2))
             await message.reply(random.choice(_RESPOSTAS_MENCAO), mention_author=False)
             return
 
         # ── 3) Ninguém chamou, sem gatilho: chance de o Bones
-        #        "aparecer do nada" de forma espontânea ───────
-        if not bones_mencionado and not chave and random.random() < CHANCE_ESPONTANEA:
-            ultimo = self._ultimo_resp.get(message.channel.id)
-            if not ultimo or (now - ultimo).total_seconds() > COOLDOWN_ESPONTANEA:
-                self._ultimo_resp[message.channel.id] = now
-                async with message.channel.typing():
-                    await asyncio.sleep(random.uniform(0.3, 0.8))
+        #        "aparecer do nada" de forma espontânea. A chance sobe
+        #        se o canal teve interação direta com ele há pouco tempo,
+        #        e o intervalo mínimo entre aparições varia (não é fixo). ─
+        if not bones_mencionado and not chave:
+            ultima_int = self._ultima_interacao.get(message.channel.id)
+            engajado = bool(ultima_int and (now - ultima_int).total_seconds() < JANELA_ENGAJAMENTO)
+            chance = CHANCE_ESPONTANEA_ENGAJADO if engajado else CHANCE_ESPONTANEA_BASE
+
+            if random.random() < chance:
+                ultimo = self._ultimo_resp.get(message.channel.id)
+                cooldown_sorteado = random.uniform(COOLDOWN_ESPONTANEA_MIN, COOLDOWN_ESPONTANEA_MAX)
+                if not ultimo or (now - ultimo).total_seconds() > cooldown_sorteado:
+                    self._ultimo_resp[message.channel.id] = now
+                    async with message.channel.typing():
+                        await asyncio.sleep(random.uniform(0.3, 0.8))
                 await message.channel.send(random.choice(_EXPRESSOES_ESPONTANEAS))
 
     # ── Comandos de aprendizado ────────────────────────
