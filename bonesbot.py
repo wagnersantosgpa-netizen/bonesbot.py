@@ -720,8 +720,16 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         if self._em_cooldown(message.channel.id, now):
             return
 
+        # Menção "de verdade": a pessoa digitou @Bones (aparece como
+        # <@id> no conteúdo cru) ou escreveu "bones" no texto. Isso é
+        # diferente de "self.bot.user in message.mentions", que também
+        # fica True quando alguém só dá reply numa mensagem do Bones
+        # (o Discord conta o ping automático do reply como menção) —
+        # e a galera reclamou que isso fazia ele "chamar a si mesmo"
+        # mesmo quando só estavam respondendo sem querer chamar.
+        mencao_explicita = bool(re.search(rf"<@!?{self.bot.user.id}>", message.content))
         bones_mencionado = (
-            self.bot.user in message.mentions
+            mencao_explicita
             or "bones" in message.content.lower()
         )
 
