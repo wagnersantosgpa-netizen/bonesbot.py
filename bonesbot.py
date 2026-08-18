@@ -1,4 +1,4 @@
-""" 
+"""
 ╔══════════════════════════════════════════════════════════════════╗
 ║                  💀  BONES BOT  🦴                               ║
 ║           Uma caveirinha fofa mascote da OLS                     ║
@@ -8,7 +8,7 @@
 Módulo incluso (foco do pedido — sistema de interações):
   • Diálogo — Bones aparece do nada, responde menções e aprende
                respostas com a galera da OLS
-#
+
 Inspirado na estrutura da Lilu Bot, adaptado pro tema caveirinha 💀
 """
 
@@ -95,6 +95,79 @@ _RESPOSTAS_SEED = {
         "*flutua até você* oi!! 👻🦴",
         "e aí, ossinho(a)!! tudo certo?? 💀🦴",
         "oiii!! bora torar um papo?? 💀✨",
+        "oi oi!! *acena com os ossinhos* 🦴💀",
+        "opa!! oi!! 💀✨",
+    ],
+    "ola": [
+        "olá, ossinho(a)!! 💀✨",
+        "*flutua educadamente* olá!! 🦴💀",
+        "olá olá!! seja bem-vindo(a)!! 💀🦴",
+        "opa, olá!! como vai?? 💀✨",
+    ],
+    "olá": [
+        "olá, ossinho(a)!! 💀✨",
+        "*flutua educadamente* olá!! 🦴💀",
+        "olá olá!! seja bem-vindo(a)!! 💀🦴",
+        "opa, olá!! como vai?? 💀✨",
+    ],
+    "hola": [
+        "hola?? kkkk o Bones só fala ossinhês e português!! 💀🦴",
+        "¡hola, ossinho(a)!! 💀✨ (aprendi isso outro dia)",
+        "hola hola!! *acena confuso* 🦴💀",
+    ],
+    "eae": [
+        "eaee!! bora, ossinho(a)?? 💀🦴",
+        "eaeee!! tudo suave?? 💀✨",
+        "*chacoalha animado* eaee!! 🦴💀",
+    ],
+    "e ai": [
+        "e aí, ossinho(a)!! tudo em cima?? 💀🦴",
+        "e aí!! *acena com os ossinhos* 💀✨",
+        "e aí, beleza?? 🦴💀",
+    ],
+    "salve": [
+        "salve salve, ossinho(a)!! 💀🦴",
+        "SALVE!! *bate os ossinhos em cumprimento* 💀✨",
+        "salve!! bora de papo?? 🦴💀",
+    ],
+    "tudo bem": [
+        "tô só ossinhos e boa vibe, ossinho(a)!! e você?? 💀✨",
+        "tudo ótimo por aqui!! flutuando tranquilo!! 🦴💀 e vc??",
+        "*balança os ossinhos animado* tudo sim!! e contigo?? 💀🦴",
+        "tudo em paz no meu caixãozinho!! e você, tá tudo bem?? 💀✨",
+        "eu tô inteirinho (literalmente, todos os ossos no lugar)!! 🦴😆 e você??",
+    ],
+    "tudo bom": [
+        "tudo bom demais, ossinho(a)!! e contigo?? 💀✨",
+        "tudo suave por aqui!! 🦴💀 e você, tá tudo bom??",
+        "*flutua tranquilo* tudo bom sim!! e aí?? 💀🦴",
+    ],
+    "ta bem": [
+        "eu tô sim!! tô inteirinho hoje!! 🦴💀 e você, tá bem??",
+        "tô ótimo, ossinho(a)!! obrigado por perguntar!! 💀✨",
+        "*chacoalha positivamente* tô bem sim!! e você?? 🦴💀",
+    ],
+    "tá bem": [
+        "eu tô sim!! tô inteirinho hoje!! 🦴💀 e você, tá bem??",
+        "tô ótimo, ossinho(a)!! obrigado por perguntar!! 💀✨",
+        "*chacoalha positivamente* tô bem sim!! e você?? 🦴💀",
+    ],
+    "ta bom": [
+        "tô sim, tudo tranquilo!! 🦴💀 e você, tá bom??",
+        "tô de boa, ossinho(a)!! 💀✨",
+    ],
+    "tá bom": [
+        "tô sim, tudo tranquilo!! 🦴💀 e você, tá bom??",
+        "tô de boa, ossinho(a)!! 💀✨",
+    ],
+    "vc ta bem": [
+        "eu?? tô ótimo, só os ossos rangendo um pouco kkkk 🦴💀 e você??",
+        "tô sim!! flutuando de boa!! 💀✨ e vc, tá tudo certo??",
+        "*acena animado* tô muito bem, obrigado por perguntar!! 🦴💀",
+    ],
+    "voce esta bem": [
+        "eu?? tô ótimo, só os ossos rangendo um pouco kkkk 🦴💀 e você??",
+        "tô sim!! flutuando de boa!! 💀✨ e você, tá tudo certo??",
     ],
     "bom dia": [
         "bom dia, ossinho(a)!! ☀️💀",
@@ -224,7 +297,9 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         texto_lower = texto.lower().strip()
         if texto_lower in self.db["respostas"]:
             return texto_lower
-        for chave in self.db["respostas"]:
+        # Checa gatilhos mais específicos (mais longos) primeiro,
+        # assim "tudo bem" não perde pra "oi" numa frase tipo "oi, tudo bem?"
+        for chave in sorted(self.db["respostas"], key=len, reverse=True):
             if chave in texto_lower:
                 return chave
         return None
