@@ -45,8 +45,8 @@ CHANCE_GATILHO_SEM_CHAMAR = 0.30   # chance de responder gatilho mesmo sem ser c
 CHANCE_ESPONTANEA_BASE      = 0.008   # chance normal, por mensagem, sem engajamento recente
 CHANCE_ESPONTANEA_ENGAJADO  = 0.03    # chance quando teve interação direta há pouco tempo
 JANELA_ENGAJAMENTO          = 300     # (segundos) considera "engajado" até 5min após a última interação
-COOLDOWN_ESPONTANEA_MIN     = 180     # (segundos) tempo mínimo calado antes de poder reaparecer sozinho
-COOLDOWN_ESPONTANEA_MAX     = 900     # (segundos) tempo máximo — o intervalo real sorteia entre min e max
+COOLDOWN_ESPONTANEA_MIN     = 1800    # (segundos) tempo mínimo calado antes de poder reaparecer sozinho = 30min
+COOLDOWN_ESPONTANEA_MAX     = 3600    # (segundos) tempo máximo — o intervalo real sorteia entre min e max = 60min
 
 # ══════════════════════════════════════════════════════════════════
 #  🤖  SETUP DO BOT
