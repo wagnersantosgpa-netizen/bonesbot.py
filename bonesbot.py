@@ -293,6 +293,8 @@ _REACOES_RP = {
         "*abraça {alvo} apertado, os ossos rangendo de carinho* 💀💕",
         "*puxa {alvo} pra um abraço caloroso (e ossudo)* 🦴🤗",
         "*se enrosca em {alvo} como um cachecol de ossos* aconchego skeletal!! 💀🥰",
+        "*abraça meio desengonçado, um osso cutucando sem querer* ai foi sem querer, mas valeu o abraço!! 🦴🥹",
+        "*aperta {alvo} num abraço apertadinho e não solta mais* fica mais um pouquinho assim 🦴💜",
     ],
     "beija": [
         "*dá um beijo de caveira em {alvo}* mwah!! cuidado com os dentinhos!! 💀😘",
@@ -436,10 +438,19 @@ _REACOES_RP_GENERICA = [
     "*balança os ossinhos, participando da cena* 🦴😄",
     "*reage do jeito que dá, sendo só um monte de osso* 💀🦴",
     "*se mexe desengonçado tentando acompanhar* 🦴😅",
+    "*inclina a caveira, meio confuso, mas topa* tá, vamo nessa!! 💀🤷",
+    "*imita o gesto sem saber muito bem o que é* isso mesmo?? assim?? 🦴😆",
+    "*chacoalha os ossos animado, participando de qualquer jeito* 💀🎉",
+    "*faz uma cara de osso confuso* eu não sei o que isso significa mas eu topo!! 🦴😳",
 ]
 
 # Reconhece mensagens no formato "Bones <verbo> <resto>" (RP de ação)
 _PADRAO_ACAO_RP = re.compile(r"^bones\s+(\S+)\s*(.*)$", re.IGNORECASE)
+
+# Reconhece também o formato "me <verbo>" — ex.: "me abraça", "me morde".
+# Isso cobre quem responde direto pro Bones (reply/menção) sem precisar
+# escrever "Bones" antes do verbo.
+_PADRAO_ACAO_RP_ME = re.compile(r"^me\s+(\S+)\s*(.*)$", re.IGNORECASE)
 
 # ══════════════════════════════════════════════════════════════════
 #  🌫️  EXPRESSÕES ESPONTÂNEAS (aparece do nada, sem ser chamado)
@@ -606,14 +617,36 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         return bool(ultimo and (now - ultimo).total_seconds() < COOLDOWN_RESPOSTA)
 
     def _detectar_reacao_rp(self, texto: str) -> str | None:
-        """Detecta mensagens tipo 'Bones morde o vilão' e monta a reação."""
-        m = _PADRAO_ACAO_RP.match(texto.strip())
-        if not m:
-            return None
-        verbo = m.group(1).lower().strip(".,!?*")
-        alvo = m.group(2).strip(" .,!?*") or "você"
-        pool = _REACOES_RP.get(verbo, _REACOES_RP_GENERICA)
-        return random.choice(pool).format(alvo=alvo)
+        """Detecta ações de RP em três formatos:
+        • 'Bones <verbo> <alvo>'  — ex.: "Bones morde o vilão"
+        • 'me <verbo>'            — ex.: "me abraça" (pede a ação pra si
+          mesmo, sem precisar chamar "Bones" antes — comum em replies)
+        • verbo isolado           — ex.: responder só "abraça" numa
+          conversa direta com o Bones
+        Nos dois últimos casos o alvo é sempre "você" (quem escreveu).
+        """
+        texto_limpo = texto.strip()
+
+        m = _PADRAO_ACAO_RP.match(texto_limpo)
+        if m:
+            verbo = m.group(1).lower().strip(".,!?*")
+            alvo = m.group(2).strip(" .,!?*") or "você"
+            pool = _REACOES_RP.get(verbo, _REACOES_RP_GENERICA)
+            return random.choice(pool).format(alvo=alvo)
+
+        m2 = _PADRAO_ACAO_RP_ME.match(texto_limpo)
+        if m2:
+            verbo = m2.group(1).lower().strip(".,!?*")
+            pool = _REACOES_RP.get(verbo, _REACOES_RP_GENERICA)
+            return random.choice(pool).format(alvo="você")
+
+        # Verbo isolado só conta se já for um verbo conhecido, pra não
+        # transformar qualquer palavra solta numa ação aleatória.
+        verbo_isolado = texto_limpo.lower().strip(".,!?*")
+        if verbo_isolado in _REACOES_RP:
+            return random.choice(_REACOES_RP[verbo_isolado]).format(alvo="você")
+
+        return None
 
     # ── Evento principal: aqui o Bones "vive" no chat ──
 
