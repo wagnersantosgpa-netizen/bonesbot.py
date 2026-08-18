@@ -1,4 +1,4 @@
-"""
+""" 
 ╔══════════════════════════════════════════════════════════════════╗
 ║                  💀  BONES BOT  🦴                               ║
 ║           Uma caveirinha fofa mascote da OLS                     ║
@@ -8,7 +8,7 @@
 Módulo incluso (foco do pedido — sistema de interações):
   • Diálogo — Bones aparece do nada, responde menções e aprende
                respostas com a galera da OLS
-
+#
 Inspirado na estrutura da Lilu Bot, adaptado pro tema caveirinha 💀
 """
 
