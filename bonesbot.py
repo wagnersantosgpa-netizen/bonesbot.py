@@ -177,6 +177,56 @@ _RESPOSTAS_SEED = {
         "eu?? tô ótimo, só os ossos rangendo um pouco kkkk 🦴💀 e você??",
         "tô sim!! flutuando de boa!! 💀✨ e você, tá tudo certo??",
     ],
+    "como vc está": [
+        "eu?? tô só ossinhos e boa vibe, ossinho(a)!! e você, como tá?? 💀✨",
+        "*chacoalha pensativo* tô bem, viu?? nenhum osso fora do lugar hoje!! 🦴💀 e vc??",
+        "tô de boa, flutuando por aí!! 💀🦴 e contigo, como andam as coisas??",
+        "tô inteirinho (literalmente)!! 🦴😆 e você, como tá??",
+    ],
+    "como você está": [
+        "eu?? tô só ossinhos e boa vibe, ossinho(a)!! e você, como tá?? 💀✨",
+        "*chacoalha pensativo* tô bem, viu?? nenhum osso fora do lugar hoje!! 🦴💀 e vc??",
+        "tô de boa, flutuando por aí!! 💀🦴 e contigo, como andam as coisas??",
+        "tô inteirinho (literalmente)!! 🦴😆 e você, como tá??",
+    ],
+    "como vc esta": [
+        "eu?? tô só ossinhos e boa vibe, ossinho(a)!! e você, como tá?? 💀✨",
+        "*chacoalha pensativo* tô bem, viu?? nenhum osso fora do lugar hoje!! 🦴💀 e vc??",
+        "tô de boa, flutuando por aí!! 💀🦴 e contigo, como andam as coisas??",
+        "tô inteirinho (literalmente)!! 🦴😆 e você, como tá??",
+    ],
+    "como você esta": [
+        "eu?? tô só ossinhos e boa vibe, ossinho(a)!! e você, como tá?? 💀✨",
+        "*chacoalha pensativo* tô bem, viu?? nenhum osso fora do lugar hoje!! 🦴💀 e vc??",
+        "tô de boa, flutuando por aí!! 💀🦴 e contigo, como andam as coisas??",
+        "tô inteirinho (literalmente)!! 🦴😆 e você, como tá??",
+    ],
+    "voce ta bão": [
+        "bão demais, ossinho(a)!! 🦴💀 (aprendi essa gíria com a galera daqui)",
+        "*chacoalha os ossinhos, todo estilo nordestino* eu tô bão sim!! e você, tá bão?? 💀🦴",
+        "tô bão, tô bão!! flutuando tranquilo por aqui!! 🦴✨",
+        "uai... quer dizer, oxente, tô bão sim!! e vc?? 💀🦴",
+    ],
+    "você tá bão": [
+        "bão demais, ossinho(a)!! 🦴💀 (aprendi essa gíria com a galera daqui)",
+        "*chacoalha os ossinhos, todo estilo nordestino* eu tô bão sim!! e você, tá bão?? 💀🦴",
+        "tô bão, tô bão!! flutuando tranquilo por aqui!! 🦴✨",
+        "uai... quer dizer, oxente, tô bão sim!! e vc?? 💀🦴",
+    ],
+    "voce ta bao": [
+        "bão demais, ossinho(a)!! 🦴💀 (aprendi essa gíria com a galera daqui)",
+        "*chacoalha os ossinhos, todo estilo nordestino* eu tô bão sim!! e você, tá bão?? 💀🦴",
+        "tô bão, tô bão!! flutuando tranquilo por aqui!! 🦴✨",
+        "uai... quer dizer, oxente, tô bão sim!! e vc?? 💀🦴",
+    ],
+    "ta bão": [
+        "tô bão sim!! 🦴💀 e você??",
+        "bão demais!! flutuando de boa!! 💀✨",
+    ],
+    "tá bão": [
+        "tô bão sim!! 🦴💀 e você??",
+        "bão demais!! flutuando de boa!! 💀✨",
+    ],
     "bom dia": [
         "bom dia, ossinho(a)!! ☀️💀",
         "*espreguiça as costelinhas* bom dia!! 🦴✨",
