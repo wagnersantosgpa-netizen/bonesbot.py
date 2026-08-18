@@ -38,7 +38,14 @@ DIALOGO_FILE = "bones_dialogo.json"
 
 # Cooldown de resposta por canal (evita o Bones spamar)
 COOLDOWN_RESPOSTA = 3          # segundos
-CHANCE_GATILHO_SEM_CHAMAR = 0.30   # chance de responder gatilho mesmo sem ser chamado
+
+# DESATIVADO: antes o Bones tinha uma chance de responder a um gatilho
+# conhecido mesmo sem ser chamado/mencionado — isso fazia ele "aparecer"
+# em conversas normais que só continham uma palavra-gatilho por coincidência.
+# Mantido em 0 (não usado) pra deixar registrado o motivo; a única forma
+# de aparição sem ser chamado agora é a espontânea de verdade (ver
+# CHANCE_ESPONTANEA_BASE/ENGAJADO), que usa frases ambiente, não gatilhos.
+CHANCE_GATILHO_SEM_CHAMAR = 0.0
 
 # Aparição espontânea ("aparece do nada") — tempo variável, não fixo,
 # pra não ficar previsível tipo relógio. E se a galera andou interagindo
@@ -729,9 +736,9 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         if reacao_rp and chave == "bones":
             chave = None
 
-        # ── 1) Gatilho conhecido: responde sempre que chamado,
-        #        e às vezes mesmo sem ser chamado ──────────────
-        if chave and (bones_mencionado or random.random() < CHANCE_GATILHO_SEM_CHAMAR):
+        # ── 1) Gatilho conhecido: só responde quando o Bones foi
+        #        de fato chamado (mencionado ou em reply) ─────────
+        if chave and bones_mencionado:
             resp = self._responder(chave)
             if resp:
                 self._ultimo_resp[message.channel.id] = now
