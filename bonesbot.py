@@ -257,6 +257,31 @@ _EXPRESSOES_ESPONTANEAS = [
 ]
 
 # ══════════════════════════════════════════════════════════════════
+#  🦴  PIADAS DE OSSOS (o Bones solta uma de vez em quando)
+# ══════════════════════════════════════════════════════════════════
+
+# Chance de, numa aparição espontânea, soltar uma piada em vez de
+# uma expressão comum (ex.: 0.4 = 40% das aparições viram piada)
+CHANCE_PIADA_NA_APARICAO = 0.4
+
+_PIADAS_OSSOS = [
+    "sabe por que se deve contratar um esqueleto?? porque ele conhece os ossos do ofício!! 💀🦴 kkkkk",
+    "qual é o golpe favorito dos esqueletos?? um osso-soco!! 🦴💀",
+    "por que o esqueleto não brigou com ninguém?? porque ele não tem estômago pra isso!! 💀😂",
+    "por que o esqueleto não vai a festas?? porque ele não tem corpo pra dançar!! 🦴✨",
+    "o que um osso disse pro outro osso?? \"a gente se encaixa direitinho\"!! 💀🦴",
+    "por que o esqueleto ficou sozinho?? porque ele não tinha ninguém ao seu lado (literalmente, faltava a costela)!! 💀😆",
+    "sabe qual o instrumento favorito do esqueleto?? o trom-bone!! 🦴🎺",
+    "por que o esqueleto foi mal na prova?? porque ele só tinha os ossos do conhecimento!! 💀📚",
+    "o que o esqueleto disse quando ganhou na loteria?? \"agora eu tô rico até a medula\"!! 🦴💰",
+    "por que os esqueletos não discutem?? porque eles não têm estômago pra confusão!! 💀🦴",
+    "qual o hobby favorito do esqueleto?? tocar tromBONE e colecionar OSSOgrafias!! 🦴🎶",
+    "por que o esqueleto foi no médico?? pra fazer um check-up nos ossos do ofício de novo!! 💀🩻 kkkkk",
+    "sabe o que o esqueleto fala quando alguém erra?? \"relaxa, isso não é osso duro de roer\"!! 🦴😂",
+    "por que o esqueleto não empresta dinheiro?? porque ele já tá liso até os ossos!! 💀💸",
+]
+
+# ══════════════════════════════════════════════════════════════════
 #  🖼️  HELPERS DE EMBED
 # ══════════════════════════════════════════════════════════════════
 
@@ -381,7 +406,10 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
                     self._ultimo_resp[message.channel.id] = now
                     async with message.channel.typing():
                         await asyncio.sleep(random.uniform(0.3, 0.8))
-                await message.channel.send(random.choice(_EXPRESSOES_ESPONTANEAS))
+                    if random.random() < CHANCE_PIADA_NA_APARICAO:
+                        await message.channel.send(random.choice(_PIADAS_OSSOS))
+                    else:
+                        await message.channel.send(random.choice(_EXPRESSOES_ESPONTANEAS))
 
     # ── Comandos de aprendizado ────────────────────────
 
@@ -444,6 +472,14 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         resp = self._responder(chave)
         await ctx.send(embed=_embed_info("🦴 Simulação", f"gatilho: `{chave}`\nresposta: {resp}"))
 
+    @commands.command(name="piada", aliases=["joke", "piadinha"])
+    async def piada(self, ctx: commands.Context):
+        """Solta uma piada de ossos na hora. Uso: b!piada"""
+        async with ctx.channel.typing():
+            await asyncio.sleep(random.uniform(0.5, 1.0))
+        await ctx.send(random.choice(_PIADAS_OSSOS))
+
+
 
 # ══════════════════════════════════════════════════════════════════
 #  💀  EVENTOS GLOBAIS DO BOT
@@ -495,6 +531,7 @@ async def bones_help(ctx: commands.Context):
         inline=False,
         value=(
             "`b!bones` — sobre mim\n"
+            "`b!piada` — solto uma piada de ossos na hora\n"
             "`b!ping` — testa minha latência"
         )
     )
