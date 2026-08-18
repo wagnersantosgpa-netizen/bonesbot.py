@@ -393,6 +393,11 @@ _PIADAS_OSSOS = [
     "por que o esqueleto não empresta dinheiro?? porque ele já tá liso até os ossos!! 💀💸",
 ]
 
+# Também funciona como gatilho de diálogo comum — assim "Bones conte uma
+# piada", "fala uma piada", "manda uma piada" etc. tudo cai aqui, não só
+# o comando b!piada.
+_RESPOSTAS_SEED["piada"] = list(_PIADAS_OSSOS)
+
 # ══════════════════════════════════════════════════════════════════
 #  🖼️  HELPERS DE EMBED
 # ══════════════════════════════════════════════════════════════════
