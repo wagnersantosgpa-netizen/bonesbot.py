@@ -260,6 +260,18 @@ _RESPOSTAS_MENCAO = [
     "*flutua até mais perto* diz aí!! 💀✨",
     "cracc... quem é?? ah, é você!! oi!! 💀🦴",
     "*acena com os dedinhos de osso* oi oi!! 💀",
+    # voz sonolenta/arrastada, meio zumbi acordando
+    "*abre um olho da órbita bem devagar* uuuuh... quem é... ah, é você. oi 😴💀",
+    # voz hiperativa, tudo em caps e correndo
+    "OXENTE ME CHAMOU?? TÔ AQUI TÔ AQUI!! *dá voltinhas no ar* 💀⚡🦴",
+    # estilo filme de terror antigo, arrastado e assombrado
+    "uuuuuuh... quem ousa perturbar o descanso do Bones?? ...brincadeira, oi!! 👻💀",
+    # gíria/informal, tipo bagunçado com a galera
+    "e aí, meu ossin(a)?? bateu o osso aqui, o que rolou?? 🦴😎",
+    # sussurrando, meio conspiratório
+    "*chega bem de mansinho e sussurra* psst... me chamou?? 🤫💀",
+    # robótico/clack-clack mecânico
+    "BEEP... digo, CLACK CLACK. Bones detectado. Bones presente. 🦴🤖",
 ]
 
 # ══════════════════════════════════════════════════════════════════
@@ -273,71 +285,149 @@ _REACOES_RP = {
         "*crava os dentinhos de osso em {alvo}* CRACK!! toma essa!! 🦴😈",
         "*morde {alvo} sem dó* AUUU... quer dizer, CRACK CRACK!! 💀🦴",
         "*abre a mandíbula e morde {alvo}* rá, bem feito!! 😈💀",
+        "*morde {alvo} e trava a mandíbula* eu... eu acho que enganchei kkkk 💀🦴",
+        "*morde de mentirinha, sem força* CLACK!! nem doeu, né?? 🦴😆",
     ],
     "abraça": [
         "*envolve {alvo} num abraço de ossinhos* awwn!! 🦴🥹",
         "*abraça {alvo} apertado, os ossos rangendo de carinho* 💀💕",
         "*puxa {alvo} pra um abraço caloroso (e ossudo)* 🦴🤗",
+        "*se enrosca em {alvo} como um cachecol de ossos* aconchego skeletal!! 💀🥰",
     ],
     "beija": [
         "*dá um beijo de caveira em {alvo}* mwah!! cuidado com os dentinhos!! 💀😘",
         "*beija {alvo} de leve* 💀💋",
+        "*manda um beijo voando de longe pra {alvo}* mwaa!! 🦴💋",
     ],
     "chuta": [
         "*dá um chutinho de osso em {alvo}* toma!! 🦴💥",
         "*chuta {alvo} com a canela de osso* PLOFT!! 💀🦴",
+        "*chuta e o próprio pé de osso sai voando junto* ops, foi sem querer!! 💀😂",
     ],
     "ataca": [
         "*avança sobre {alvo} chacoalhando os ossos* ATAQUEEE!! 💀⚔️",
         "*pula em cima de {alvo}* rá, se ferrou!! 🦴😈",
         "*investe contra {alvo} com tudo* CRACK CRACK!! 💀🦴",
+        "*ataca fazendo pose dramática antes* preparem-se... CRACK!! 💀⚔️",
     ],
     "cutuca": [
         "*cutuca {alvo} com o dedinho de osso* toc toc!! 🦴👀",
         "*fica cutucando {alvo} sem parar* toc toc toc!! 💀😆",
+        "*cutuca e sai correndo rindo* pega eu!! kkkk 🦴💨",
     ],
     "belisca": [
         "*belisca {alvo} de leve* ai, mentira, eu nem tenho carne pra beliscar!! kkkk 💀🦴",
+        "*tenta beliscar mas só bate osso no osso* clack, isso doeu em mim!! 💀😆",
     ],
     "empurra": [
         "*empurra {alvo} de leve* opa, sai da frente!! 🦴😆",
         "*dá um empurrãozinho em {alvo}* eita, com força não!! 💀",
+        "*empurra e quase perde o próprio equilíbrio* eita, casa de osso é osso!! 🦴😅",
     ],
     "ignora": [
         "*vira a caveira pro outro lado, ignorando {alvo}* 💀🙄",
         "*finge que não viu {alvo}* ... 👀💀",
+        "*assobia baixinho fingindo que não é com ele* cracc... cracc... 💀",
     ],
     "acorda": [
         "*abre um olho da órbita vazia* hm?? já?? tá bom, acordei!! 😴💀",
         "*se espreguiça todo desconjuntado* ain, {alvo}, deixa eu dormir mais um pouco!! 💀😴",
+        "*acorda de sobressalto e um osso cai no chão* eu tô bem, eu tô bem!! 🦴😵",
     ],
     "chama": [
         "*aparece flutuando na hora* presente!! quem chamou?? 💀🦴",
+        "*surge de trás de {alvo}* falou meu nome?? 👀💀",
     ],
     "bate": [
         "*leva a batida e os ossos chacoalham todos* AI!! (bom, sou só osso, não dói tanto) 💀😂",
+        "*os ossos tremem com o baque* CLACK!! ok isso eu senti!! 🦴😳",
     ],
     "assusta": [
         "*se assusta e os ossinhos voam pro alto* AAAAH!! 😱💀🦴",
         "*pula de susto, quase se desmonta* eita, {alvo}, quase me tirou um osso do lugar!! 💀😱",
+        "*dá um salto pra trás e a caveira quase cai* AAAAAH NÃO FAZ ISSO!! 😱🦴",
+        "*congela no lugar, os ossinhos travados de susto* ...vocês viram isso?? eu quase morri (de novo) 💀😰",
+        "*solta um gritinho estridente e se esconde detrás de um osso* SOCORRO... ah espera, já passou 😱💀",
     ],
     "rouba": [
         "*esconde os ossinhos rapidinho* ei, isso é meu, {alvo}!! 🦴😤",
+        "*sai correndo com o que restou dos ossos* NÃOOO devolve!! 🦴💨",
     ],
     "brinca": [
         "*sacode animado, pronto pra brincar* eba, bora brincar!! 🦴✨",
+        "*rodopia de felicidade* brincadeira?? eu topo sempre!! 💀🎉",
     ],
     "foge": [
         "*sai flutuando rapidinho, os ossos voando pra trás* AAAH TCHAU!! 👻💀",
         "*foge de {alvo} chacoalhando todo* CRACK CRACK CORRE!! 🦴💨",
+        "*desaparece numa nuvem de poeira de osso* nem me viram sair!! 👻🦴",
     ],
     "protege": [
         "*se põe na frente de {alvo}, escudo de osso ativado* pode vir, eu seguro!! 🦴🛡️",
+        "*abre os braços protegendo {alvo}* passa por cima de mim primeiro!! 💀🛡️",
     ],
     "cura": [
         "*balança os ossinhos numa dancinha mágica em cima de {alvo}* fica bom logo!! 🦴✨💫",
+        "*sopra uma poeira de osso reluzente em {alvo}* pronto, remédio de caveira!! 💀✨",
+    ],
+    "grita": [
+        "*se encolhe todo com o grito* AAAI meus tímpanos (que eu não tenho)!! 😱💀",
+        "*os ossos chacoalham em resposta ao grito* opa, calma, calma!! 🦴😅",
+    ],
+    "berra": [
+        "*se assusta com o berro e derruba um osso* eita, grita não que eu me desmonto!! 😱🦴",
+    ],
+    "sussurra": [
+        "*se aproxima flutuando de mansinho pra escutar* hm?? fala baixinho de novo, quase não ouço sem orelha 👂💀",
+        "*inclina a caveira pra ouvir melhor* segredo?? conta, conta!! 🤫💀",
+    ],
+    "dança": [
+        "*rebola os ossinhos desengonçado* dancinha de caveira ativada!! 💀🕺",
+        "*tenta acompanhar o ritmo e quase se desmonta* isso aqui é osso solto, literalmente!! 🦴💃",
+    ],
+    "canta": [
+        "*acompanha cantando com uma voz que só sai ecoando* laaaa lá lá (é osso cantando, relevem)!! 🦴🎶",
+    ],
+    "chora": [
+        "*fica sem graça vendo {alvo} chorar e se aproxima* ei, ei, tá tudo bem?? tô aqui!! 🦴💔",
+        "*envolve {alvo} num abraço consolador* pode chorar, eu seguro os ossinhos por você 💀🥺",
+    ],
+    "ri": [
+        "*ri junto, os dentinhos batendo* kkkkk cracc cracc!! 💀😂",
+    ],
+    "persegue": [
+        "*sai flutuando atrás de {alvo} sem parar* voltaaa aqui!! kkkk 🦴💨",
+    ],
+    "consola": [
+        "*pousa a mãozinha de osso no ombro de {alvo}* tô aqui, ossinho(a)!! vai ficar tudo bem 🦴🤍",
+    ],
+    "zoa": [
+        "*ri baixinho e desvia* ei, poupa, eu sou só um monte de osso indefeso!! 💀😆",
+    ],
+    "fotografa": [
+        "*faz pose toda desengonçada pra foto* tira meu lado bom (eu só tenho ossos, então qualquer lado serve) 📸💀",
+    ],
+    "acaricia": [
+        "*se derrete (osso não derrete mas relevem) com o carinho* aaaah que gostoso, faz de novo 🥹💀",
+    ],
+    "voa": [
+        "*sai flutuando em espiral pelo ar* eu já flutuo o tempo todo mas tá bom, vamos voar!! 🦴✈️",
     ],
 }
+
+# Verbos que quando combinados com "bones" tendem a gerar um susto —
+# usados também fora do RP, quando alguém tenta assustar o Bones
+# escrevendo "bu", "buu" etc.
+_GATILHOS_SUSTO = ["bu", "buu", "buuu", "aaah", "aaaah"]
+_RESPOSTAS_SUSTO = [
+    "AAAAAH!! *os ossinhos voam em todas as direções* 😱💀🦴",
+    "*pula pra trás assustado, quase caindo em pedaços* NÃO FAZ ISSO, EU SOU FRÁGIL (literalmente feito de osso)!! 😱🦴",
+    "*congela por um segundo, depois relaxa* ...quase, quase me pegou dessa vez!! 💀😅",
+    "*deixa a caveira cair de susto e corre pra recolocar* eita, essa foi por pouco!! 🦴😳",
+    "*solta um gritinho fino e se esconde detrás de alguém* SOCORROOO... ah, era você. oi 💀😆",
+]
+for _g in _GATILHOS_SUSTO:
+    _RESPOSTAS_SEED[_g] = list(_RESPOSTAS_SUSTO)
 
 # Reações genéricas pra qualquer verbo que não esteja no dicionário acima —
 # assim o Bones sempre reage a uma ação, mesmo que não reconheça o verbo.
@@ -366,6 +456,18 @@ _EXPRESSOES_ESPONTANEAS = [
     "*observa em silêncio, balançando a mandíbula* 💀",
     "*se esconde de novo no escuro* 👻🦴",
     "psiu... o Bones tá de olho 👀💀",
+    # variações com clima de susto — Bones pregando peça no chat
+    "*surge bem no meio da tela sem avisar* BU!! ...ok já vou de novo 😱👻",
+    "*aparece de repente atrás de todo mundo* será que alguém sentiu minha presença?? 👀💀",
+    "*faz barulho de osso quicando no escuro* clack... CLACK... alguém aí?? 🦴👻",
+    # voz sonolenta flutuando de madrugada
+    "*flutua bocejando, meio zumbi* uuuh... que horas são... 😴💀",
+    # voz hiperativa aparecendo
+    "OIEE EU TÔ AQUI DE NOVO!! *dá cambalhotas no ar* 🦴⚡",
+    # gíria/informal
+    "só passando pra dar um alô pro pessoal, gente boa 🦴😎",
+    # sussurro misterioso
+    "*sussurra baixinho vindo do nada* alguém... me... chamou...?? 🤫👻",
 ]
 
 # ══════════════════════════════════════════════════════════════════
@@ -391,12 +493,40 @@ _PIADAS_OSSOS = [
     "por que o esqueleto foi no médico?? pra fazer um check-up nos ossos do ofício de novo!! 💀🩻 kkkkk",
     "sabe o que o esqueleto fala quando alguém erra?? \"relaxa, isso não é osso duro de roer\"!! 🦴😂",
     "por que o esqueleto não empresta dinheiro?? porque ele já tá liso até os ossos!! 💀💸",
+    "por que o esqueleto foi rejeitado no encontro?? porque ele não tinha coração pra dar!! 🦴💔",
+    "qual é o esporte favorito do esqueleto?? boliche, ele já é todo osso e ainda derruba os pinos!! 💀🎳",
+    "por que o esqueleto ficou de boa na praia?? porque ele já tá com o corpo sequinho!! 🦴🏖️ kkkk",
+    "o que o esqueleto disse pro dentista?? \"pode ir com calma, eu não tenho nervosismo, só nervos mesmo\"!! 💀🦷",
 ]
 
 # Também funciona como gatilho de diálogo comum — assim "Bones conte uma
 # piada", "fala uma piada", "manda uma piada" etc. tudo cai aqui, não só
-# o comando b!piada.
+# o comando b!piada. Cadastra várias formas diferentes de pedir, porque
+# a galera não fala tudo igual — cada frase abaixo é um jeito diferente
+# de pedir a mesma coisa, e todas puxam do mesmo pool de piadas.
 _RESPOSTAS_SEED["piada"] = list(_PIADAS_OSSOS)
+for _frase_piada in (
+    "conte uma piada",
+    "conta uma piada",
+    "me conte uma piada",
+    "me conta uma piada",
+    "fala uma piada",
+    "me fala uma piada",
+    "manda uma piada",
+    "solta uma piada",
+    "diz uma piada",
+    "diga uma piada",
+    "quero uma piada",
+    "sabe uma piada",
+    "tem uma piada",
+    "conta ai uma piada",
+    "conta aí uma piada",
+    "piada de osso",
+    "piada de ossos",
+    "piada de esqueleto",
+    "me conte uma piada bones",
+):
+    _RESPOSTAS_SEED[_frase_piada] = list(_PIADAS_OSSOS)
 
 # ══════════════════════════════════════════════════════════════════
 #  🖼️  HELPERS DE EMBED
@@ -449,12 +579,23 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         texto_lower = texto.lower().strip()
         if texto_lower in self.db["respostas"]:
             return texto_lower
-        # Checa gatilhos mais específicos (mais longos) primeiro,
-        # assim "tudo bem" não perde pra "oi" numa frase tipo "oi, tudo bem?"
-        for chave in sorted(self.db["respostas"], key=len, reverse=True):
-            if chave in texto_lower:
-                return chave
-        return None
+
+        # Junta todos os gatilhos que aparecem na frase, e prioriza o mais
+        # específico: mais palavras primeiro, depois mais caracteres.
+        # Isso resolve casos tipo "conte uma piada bones" — antes o
+        # gatilho "bones" (só por estar sendo chamado) roubava a resposta
+        # de "piada" no empate de tamanho de string.
+        candidatos = [c for c in self.db["respostas"] if c in texto_lower]
+        if not candidatos:
+            return None
+        candidatos.sort(key=lambda c: (len(c.split()), len(c)), reverse=True)
+
+        # "bones" (o próprio nome/chamado) nunca vence se existir outro
+        # gatilho mais específico junto na mesma frase — ele só responde
+        # "presente!!" quando for realmente a única coisa detectada.
+        if candidatos[0] == "bones" and len(candidatos) > 1:
+            return candidatos[1]
+        return candidatos[0]
 
     def _responder(self, chave: str) -> str:
         resps = self.db["respostas"].get(chave, [])
@@ -496,6 +637,15 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
 
         chave = self._checar_gatilho(message.content)
 
+        # Detecta se a mensagem é uma ação de RP ("Bones morde o vilão",
+        # "Bones abraça a galera" etc.). Isso tem prioridade sobre o
+        # gatilho genérico "bones" — antes, qualquer ação de RP virava só
+        # um "presente!!" porque a palavra "bones" também é um gatilho e
+        # sempre "ganhava" primeiro. Agora a ação real é priorizada.
+        reacao_rp = self._detectar_reacao_rp(message.content) if bones_mencionado else None
+        if reacao_rp and chave == "bones":
+            chave = None
+
         # ── 1) Gatilho conhecido: responde sempre que chamado,
         #        e às vezes mesmo sem ser chamado ──────────────
         if chave and (bones_mencionado or random.random() < CHANCE_GATILHO_SEM_CHAMAR):
@@ -508,14 +658,14 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
                 await message.reply(resp, mention_author=False)
                 return
 
-        # ── 2) Foi chamado mas sem gatilho específico ───────
+        # ── 2) Foi chamado mas sem gatilho específico (ou virou uma
+        #        ação de RP que acabou de ganhar prioridade acima) ────
         if bones_mencionado and not chave:
             self._ultimo_resp[message.channel.id] = now
             self._ultima_interacao[message.channel.id] = now
             async with message.channel.typing():
                 await asyncio.sleep(random.uniform(0.5, 1.2))
 
-            reacao_rp = self._detectar_reacao_rp(message.content)
             if reacao_rp:
                 await message.reply(reacao_rp, mention_author=False)
             else:
