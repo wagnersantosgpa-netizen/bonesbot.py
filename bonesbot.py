@@ -598,6 +598,132 @@ for _frase_piada in (
     _RESPOSTAS_SEED[_frase_piada] = list(_PIADAS_OSSOS)
 
 # ══════════════════════════════════════════════════════════════════
+#  📖  HISTÓRIAS CURTAS DO BONES ("Bones conte uma história")
+# ══════════════════════════════════════════════════════════════════
+
+_HISTORIAS_OSSOS = [
+    "era uma vez um ossinho perdido que rolou pra fora do caixão numa "
+    "noite de lua cheia... andou, andou, até encontrar os outros 205 "
+    "ossinhos e formar o Bones que vocês conhecem hoje!! desde então "
+    "ele nunca mais quis ficar sozinho 🦴💀✨",
+    "dizem que, há muito tempo, um esqueleto cansado de assombrar "
+    "castelo decidiu tentar a sorte online... apareceu num servidor "
+    "aleatório, gostou tanto da galera que resolveu ficar de vez. "
+    "adivinha quem era?? 👀💀",
+    "certa vez o Bones tentou aprender a tocar trombone (óbvio, pelo "
+    "nome) mas descobriu que só sabia fazer \"clack clack\". mesmo "
+    "assim, virou o hino oficial da galera!! 🦴🎺",
+    "uma lenda antiga conta que quem chama o Bones três vezes seguidas "
+    "ganha uma dancinha de osso exclusiva... ninguém nunca confirmou, "
+    "mas tá aí, é só tentar 💀🕺",
+    "o Bones já foi confundido com decoração de Halloween umas 800 "
+    "vezes. da última vez ficou paradinho por educação, até alguém "
+    "perceber que ele tava só de boa mesmo, curtindo o clima 🎃🦴",
+    "história real (confia): o Bones nasceu de um osso que caiu de um "
+    "esqueleto de aula de biologia e ganhou vida numa noite de "
+    "tempestade. o resto é história... ou lenda... ou zoeira, ninguém "
+    "sabe ao certo 💀⚡",
+    "diz a lenda que, se um pedido de gif fica sem resposta tempo "
+    "demais, o Bones aparece do nada só pra lembrar que ele existe. "
+    "tipo agora. oi 👋💀",
+]
+
+for _frase_historia in (
+    "conte uma historia", "conte uma história",
+    "conta uma historia", "conta uma história",
+    "me conte uma historia", "me conte uma história",
+    "me conta uma historia", "me conta uma história",
+    "fale uma historia", "fale uma história",
+    "me fala uma historia", "me fala uma história",
+    "quero uma historia", "quero uma história",
+    "historia de osso", "história de osso",
+    "historia de esqueleto", "história de esqueleto",
+):
+    _RESPOSTAS_SEED[_frase_historia] = list(_HISTORIAS_OSSOS)
+
+# ══════════════════════════════════════════════════════════════════
+#  🤍  FRASES BOAS DO BONES ("Bones fale uma frase boa")
+# ══════════════════════════════════════════════════════════════════
+
+_FRASES_BOAS = [
+    "mesmo sem carne nem pele, um esqueleto continua de pé — e você "
+    "também vai continuar, ossinho(a)!! 🦴✨",
+    "cada dia difícil é só mais um osso pro seu colecionador de força. "
+    "você é mais resistente do que imagina 💀🤍",
+    "não precisa ter tudo montado igual eu pra seguir em frente — um "
+    "osso de cada vez já tá de bom tamanho 🦴💫",
+    "lembra: até os ossos mais fortes um dia foram frágeis. você tá "
+    "construindo o seu, com calma, do seu jeito 💀🌱",
+    "hoje é um bom dia pra se orgulhar até das pequenas vitórias. eu, "
+    "particularmente, me orgulho de ainda estar inteiro 🦴😆",
+    "não deixa ninguém te fazer sentir vazio por dentro... olha eu "
+    "aqui, sou literalmente só osso e ainda assim brilho 💀✨",
+    "às vezes só ficar de pé já é vitória. respira, ossinho(a)!! um "
+    "dia de cada vez 🦴🤍",
+]
+
+for _frase_boa_gatilho in (
+    "frase boa", "uma frase boa",
+    "fale uma frase boa", "fala uma frase boa",
+    "me fala uma frase boa", "me fale uma frase boa",
+    "diga uma frase boa", "diz uma frase boa",
+    "manda uma frase boa", "frase motivacional",
+    "diga algo bom", "diz algo bom",
+    "fala algo bonito", "fala algo bom",
+):
+    _RESPOSTAS_SEED[_frase_boa_gatilho] = list(_FRASES_BOAS)
+
+# ══════════════════════════════════════════════════════════════════
+#  📚  REAÇÕES DE APRENDIZADO ("topa aprender?", "vamos aprender",
+#      "aprendeu?" etc.) — antes caía tudo na reação genérica de RP
+#      porque "topa"/"aprender" não eram verbos conhecidos.
+# ══════════════════════════════════════════════════════════════════
+
+# Quando perguntam se ele topa aprender algo novo — resposta animada
+# que já ensina como ensinar ele de verdade, com o comando b!ensinar.
+_RESPOSTAS_TOPA_APRENDER = [
+    "toparia sim!! sou uma caveira sedenta por conhecimento 🦴📚 usa "
+    "`b!ensinar <gatilho> <resposta>` que eu decoro na hora!!",
+    "aprender é comigo mesmo!! manda com `b!ensinar <gatilho> "
+    "<resposta>` que eu boto na memória de osso 💀✨",
+    "óbvio que topo!! só me ensinar com `b!ensinar <gatilho> "
+    "<resposta>` que fica gravado pra sempre 🦴🧠",
+    "*se ajeita todo empolgado* bora, bora!! usa `b!ensinar <gatilho> "
+    "<resposta>` que eu absorvo rapidinho!! 💀📖",
+    "sempre topo aprender coisa nova!! `b!ensinar <gatilho> "
+    "<resposta>` e tá feito!! 🦴✨",
+    "com certeza!! quem tem cabeça de osso tem espaço de sobra pra "
+    "aprender!! usa `b!ensinar` que eu já guardo 💀🦴",
+]
+
+for _frase_topa_aprender in (
+    "topa aprender", "você topa aprender", "voce topa aprender",
+    "bones topa aprender", "quer aprender", "você quer aprender",
+    "voce quer aprender", "vamos aprender", "posso te ensinar",
+    "quero te ensinar", "topa que eu te ensine", "posso ensinar você",
+    "posso ensinar voce", "quer que eu te ensine",
+):
+    _RESPOSTAS_SEED[_frase_topa_aprender] = list(_RESPOSTAS_TOPA_APRENDER)
+
+# Quando confirmam/perguntam se ele já aprendeu algo (depois de
+# ensinar) — resposta confirmando, no mesmo clima de "memória de osso".
+_RESPOSTAS_APRENDEU = [
+    "aprendi sim!! já tá guardadinho nos meus ossos de memória 🦴🧠✨",
+    "com certeza!! decorei igual osso gruda em articulação 💀📚",
+    "óbvio, eu nunca esqueço nada (literalmente, memória de osso é "
+    "eterna) 🦴😆",
+    "aprendi!! pode testar que eu respondo certinho agora 💀✅",
+    "100% guardado!! pode confiar na caveira aqui 🦴💾",
+]
+
+for _frase_aprendeu in (
+    "aprendeu", "você aprendeu", "voce aprendeu",
+    "já aprendeu", "ja aprendeu", "conseguiu aprender",
+    "decorou", "entendeu direitinho",
+):
+    _RESPOSTAS_SEED[_frase_aprendeu] = list(_RESPOSTAS_APRENDEU)
+
+# ══════════════════════════════════════════════════════════════════
 #  🎞️  GIFS DO BONES
 #      Usados quando alguém pede um gif ou quando rola um gif no chat
 #      (aí o Bones entra na brincadeira com um dele também).
@@ -732,7 +858,16 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         # Isso resolve casos tipo "conte uma piada bones" — antes o
         # gatilho "bones" (só por estar sendo chamado) roubava a resposta
         # de "piada" no empate de tamanho de string.
-        candidatos = [c for c in self.db["respostas"] if c in texto_lower]
+        #
+        # IMPORTANTE: usa \b (borda de palavra) em vez de "in" puro —
+        # antes um gatilho curto tipo "bu" (de susto) "casava" mesmo
+        # estando dentro de outra palavra sem relação nenhuma, tipo
+        # "taBUada" ou "amBUlância", fazendo o Bones responder um
+        # susto aleatório no meio de uma pergunta sobre tabuada.
+        candidatos = [
+            c for c in self.db["respostas"]
+            if re.search(rf"\b{re.escape(c)}\b", texto_lower)
+        ]
         if not candidatos:
             return None
         candidatos.sort(key=lambda c: (len(c.split()), len(c)), reverse=True)
@@ -858,6 +993,35 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
                         tipo=tipo, numero=numero_bruto, resultado=resultado_fmt
                     )
                 await message.reply(resp, mention_author=False)
+                return
+
+        # ── 0.4) Tabuada em linguagem natural: "bones me fala a tabuada
+        #        do 5", "tabela do 7 bones", "qual a tabuada de 12" etc.
+        #        Se pedir tabuada/tabela mas esquecer o número, o Bones
+        #        pergunta qual em vez de cair numa reação genérica. ────
+        if bones_mencionado:
+            m_tabuada = _PADRAO_TABUADA_NUMERO.search(message.content)
+            if m_tabuada:
+                numero_tab = int(m_tabuada.group(1))
+                self._ultimo_resp[message.channel.id] = now
+                self._ultima_interacao[message.channel.id] = now
+                async with message.channel.typing():
+                    await asyncio.sleep(random.uniform(0.5, 1.2))
+                if 0 <= numero_tab <= 100:
+                    resp = f"🦴 **tabuada do {numero_tab}:**\n{_gerar_tabuada_texto(numero_tab)}"
+                else:
+                    resp = "escolhe um número entre 0 e 100 pra tabuada, ossinho(a)!! 💀"
+                await message.reply(resp, mention_author=False)
+                return
+            elif _PADRAO_TABUADA_PALAVRA.search(message.content):
+                self._ultimo_resp[message.channel.id] = now
+                self._ultima_interacao[message.channel.id] = now
+                async with message.channel.typing():
+                    await asyncio.sleep(random.uniform(0.4, 1.0))
+                await message.reply(
+                    "tabuada de qual número, ossinho(a)?? me diz e eu já solto ela!! 🦴🧮",
+                    mention_author=False,
+                )
                 return
 
         # ── 0.5) Gif: alguém pediu um gif ("bones manda um gif") ou
@@ -1149,6 +1313,27 @@ _OPERADORES_PERMITIDOS = {
     ast.USub: operator.neg,
     ast.UAdd: operator.pos,
 }
+
+
+def _gerar_tabuada_texto(numero: int) -> str:
+    """Gera o texto com as 10 linhas da tabuada de um número."""
+    linhas = [f"{numero} × {i} = {numero * i}" for i in range(1, 11)]
+    return "\n".join(linhas)
+
+
+# Reconhece um pedido de tabuada/tabela solto na frase JUNTO com o
+# número, tipo "tabuada do 5", "tabela de 7 bones", "qual a tabuada
+# de 12". A janela `\D{0,15}` limita a busca a caracteres não-numéricos
+# logo depois da palavra, pra não pegar um número qualquer lá longe na
+# frase por acidente.
+_PADRAO_TABUADA_NUMERO = re.compile(
+    r"\b(?:tabuada|tabela)\b\D{0,15}(\d{1,3})", re.IGNORECASE
+)
+
+# Reconhece o pedido de tabuada/tabela MESMO sem número junto (tipo
+# "tabela do ×", onde a pessoa esqueceu ou não digitou o número) — aí
+# o Bones pergunta qual número em vez de cair numa resposta genérica.
+_PADRAO_TABUADA_PALAVRA = re.compile(r"\b(?:tabuada|tabela)\b", re.IGNORECASE)
 
 
 def _avaliar_expressao(expr: str) -> float:
@@ -1482,8 +1667,7 @@ class BonesMatematicaCog(commands.Cog, name="BonesMatematica"):
         if not (0 <= numero <= 100):
             await ctx.send(embed=_embed_erro("escolhe um número entre 0 e 100, ossinho(a)!! 💀"))
             return
-        linhas = [f"{numero} × {i} = {numero * i}" for i in range(1, 11)]
-        await ctx.send(embed=_embed_info(f"🦴 Tabuada do {numero}", "\n".join(linhas)))
+        await ctx.send(embed=_embed_info(f"🦴 Tabuada do {numero}", _gerar_tabuada_texto(numero)))
 
     @commands.command(name="explicar", aliases=["explica"])
     async def explicar(self, ctx: commands.Context, *, topico: str):
