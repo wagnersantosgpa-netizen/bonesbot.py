@@ -18,6 +18,7 @@ import asyncio
 import os
 import re
 import json
+import math
 import random
 from datetime import datetime, timezone
 from dotenv import load_dotenv
@@ -622,6 +623,16 @@ _GIFS_BONES = [
     "https://media.tenor.com/O1kfNjm2rCkAAAAM/qiwimedia-mike-wazowski.gif",
     "https://3.bp.blogspot.com/-UxnwHhBKhvI/VVDA8cWziII/AAAAAAAAFRU/-12pMp3OYqY/s1600/gifs%2Blulz%2B(10).gif",
     "https://68.media.tumblr.com/e1dd11cf06f8283300d03015b4e8c15c/tumblr_nws1b0jfkp1ro6cmho1_500.gif",
+    "https://tenor.com/view/skeleton-funny-light-gif-4203369433023213948",
+    "https://tenor.com/view/spooky-funny-skeleton-meme-gif-9894271563068259873",
+    "https://tenor.com/view/skeleton-dancing-skeleton-funny-meme-gif-27362095",
+    "https://tenor.com/view/funny-skeleton-gif-1478461838657651763",
+    "https://tenor.com/view/skeleton-meme-shield-meme-skeleton-banging-shield-funny-gif-3607469265930617786",
+    "https://tenor.com/view/skeleton-funny-goofy-gif-15479819821654290975",
+    "https://tenor.com/view/skeleton-meme-gif-12247541766629223091",
+    "https://tenor.com/view/skeleton-quotes-funny-meme-discord-gif-24942185",
+    "https://tenor.com/view/skeleton-do-not-do-not-funny-skeleton-gif-11759851615541958199",
+    "https://tenor.com/view/across-across-screen-across-the-screen-benjammins-funny-skeleton-gif-7350105786460263006",
 ]
 
 _RESPOSTAS_GIF = [
@@ -821,6 +832,31 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
                     if isinstance(resultado, float) and resultado.is_integer():
                         resultado = int(resultado)
                     resp = random.choice(_RESPOSTAS_CONTA_NATURAL).format(bruta=bruta, resultado=resultado)
+                await message.reply(resp, mention_author=False)
+                return
+
+        # ── 0.3) Raiz solta no meio da frase: "bones qual a raiz
+        #        quadrada de 189562525", "raiz cúbica de 27 bones" etc.
+        #        Mesma ideia da conta solta acima — resolve na hora,
+        #        sem precisar de comando. ──────────────────────────────
+        if bones_mencionado:
+            raiz = _detectar_raiz_no_texto(message.content)
+            if raiz:
+                tipo, numero_bruto, resultado = raiz
+                self._ultimo_resp[message.channel.id] = now
+                self._ultima_interacao[message.channel.id] = now
+                async with message.channel.typing():
+                    await asyncio.sleep(random.uniform(0.5, 1.2))
+                if resultado is None:
+                    resp = random.choice(_RESPOSTAS_RAIZ_NEGATIVA).format(numero=numero_bruto)
+                else:
+                    if abs(resultado - round(resultado)) < 1e-9:
+                        resultado_fmt = int(round(resultado))
+                    else:
+                        resultado_fmt = round(resultado, 4)
+                    resp = random.choice(_RESPOSTAS_RAIZ_NATURAL).format(
+                        tipo=tipo, numero=numero_bruto, resultado=resultado_fmt
+                    )
                 await message.reply(resp, mention_author=False)
                 return
 
@@ -1154,6 +1190,56 @@ _PADRAO_EXPRESSAO_MATEMATICA = re.compile(
 _DIVISAO_POR_ZERO = object()
 
 
+# Reconhece um pedido de raiz solto na frase, tipo "raiz quadrada de
+# 189562525", "raiz cúbica de 27" ou só "raiz de 81" (sem qualificador
+# assume quadrada, que é o uso mais comum no dia a dia). Exige um
+# número logo depois pra não confundir com a pergunta de conceito
+# "o que é raiz quadrada" (essa não tem número, cai no módulo de
+# explicações em vez de tentar calcular).
+_PADRAO_RAIZ = re.compile(
+    r"\braiz\s*(quadrada|c[uú]bica)?\s*(?:de\s+)?(-?\d+(?:[.,]\d+)?)",
+    re.IGNORECASE,
+)
+
+
+def _detectar_raiz_no_texto(texto: str) -> tuple[str, str, float | None] | None:
+    """Procura um pedido de raiz (quadrada ou cúbica) solto na frase.
+    Devolve (tipo, número_bruto, resultado). Resultado vem None quando
+    é uma raiz quadrada de número negativo (não existe nos reais)."""
+    m = _PADRAO_RAIZ.search(texto.lower())
+    if not m:
+        return None
+    tipo = "cúbica" if m.group(1) and "c" in m.group(1) else "quadrada"
+    numero_bruto = m.group(2).strip()
+    numero = float(numero_bruto.replace(",", "."))
+    if tipo == "cúbica":
+        resultado = math.copysign(abs(numero) ** (1 / 3), numero)
+    else:
+        if numero < 0:
+            return tipo, numero_bruto, None
+        resultado = math.sqrt(numero)
+    return tipo, numero_bruto, resultado
+
+
+# Várias falas diferentes pra quando o Bones calcula uma raiz solta na
+# conversa, no mesmo espírito das falas de conta natural acima.
+_RESPOSTAS_RAIZ_NATURAL = [
+    "*conta os ossinhos em par* a raiz {tipo} de `{numero}` é **{resultado}**!! 🦴💀",
+    "clack clack!! raiz {tipo} de `{numero}` = **{resultado}** 🧮💀",
+    "*flutua até o quadro-negro imaginário e escreve* raiz {tipo} de `{numero}` dá **{resultado}**!! 💀✏️",
+    "fácil pra mim, ossinho(a)!! raiz {tipo} de `{numero}` = **{resultado}** 🦴🧮",
+    "opa, raiz no ar!! raiz {tipo} de `{numero}` é **{resultado}** 💀🦴",
+    "*estala os dedos ósseos* na moral, raiz {tipo} de `{numero}` é **{resultado}**!! 🦴💀",
+]
+
+# Falas especiais pra quando pedem raiz quadrada de número negativo
+# (não existe nos reais — só entraria número imaginário).
+_RESPOSTAS_RAIZ_NEGATIVA = [
+    "eita, `{numero}` é negativo!! raiz quadrada disso não existe nos números reais, ossinho(a)!! só rolaria com número imaginário (aquele `i` ali) 💀🧮 e olha que eu já sou um fantasma de osso kkkk",
+    "hmm, `{numero}` negativo não tem raiz quadrada real!! isso já é papo de número imaginário, foge da minha alçada de caveira 👻💀",
+]
+
+
 def _detectar_conta_no_texto(texto: str) -> tuple[str, float] | None:
     """Procura uma conta solta no meio da frase. Devolve (expressão
     original, resultado) ou None se não achar nada parecido com conta.
@@ -1365,6 +1451,30 @@ class BonesMatematicaCog(commands.Cog, name="BonesMatematica"):
                 "não consegui entender essa conta!! 💀\n"
                 "usa só números e `+ - * / ** ( )`, tipo: `b!conta (4 + 2) * 3`"
             ))
+
+    @commands.command(name="raiz")
+    async def raiz(self, ctx: commands.Context, *, texto: str):
+        """Calcula raiz quadrada (ou cúbica) de um número. Uso: b!raiz 81 | b!raiz cubica de 27"""
+        resultado_raiz = _detectar_raiz_no_texto(texto)
+        if not resultado_raiz:
+            await ctx.send(embed=_embed_erro(
+                "não achei um número aí!! usa tipo `b!raiz 81` ou `b!raiz cúbica de 27` 💀"
+            ))
+            return
+        tipo, numero_bruto, resultado = resultado_raiz
+        if resultado is None:
+            await ctx.send(embed=_embed_erro(
+                random.choice(_RESPOSTAS_RAIZ_NEGATIVA).format(numero=numero_bruto)
+            ))
+            return
+        if abs(resultado - round(resultado)) < 1e-9:
+            resultado = int(round(resultado))
+        else:
+            resultado = round(resultado, 4)
+        await ctx.send(embed=_embed_ok(
+            "🧮 Raiz calculada!!",
+            random.choice(_RESPOSTAS_RAIZ_NATURAL).format(tipo=tipo, numero=numero_bruto, resultado=resultado)
+        ))
 
     @commands.command(name="tabuada")
     async def tabuada(self, ctx: commands.Context, numero: int):
