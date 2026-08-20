@@ -831,6 +831,22 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
                     await message.channel.send(conteudo)
                 return
 
+        # ── 0.7) Pergunta de conceito: "qual é a fórmula de baskara?",
+        #        "o que é uma fração?", "explica porcentagem" etc. Se o
+        #        assunto for algo que o Bones sabe explicar, ele responde
+        #        de verdade em vez de cair na reação genérica de RP. ────
+        if bones_mencionado:
+            assunto = _extrair_assunto_pergunta(message.content)
+            if assunto:
+                explicacao = _buscar_explicacao(assunto)
+                if explicacao:
+                    self._ultimo_resp[message.channel.id] = now
+                    self._ultima_interacao[message.channel.id] = now
+                    async with message.channel.typing():
+                        await asyncio.sleep(random.uniform(0.6, 1.4))
+                    await message.reply(explicacao, mention_author=False)
+                    return
+
         # Detecta se a mensagem é uma ação de RP ("Bones morde o vilão",
         # "Bones abraça a galera" etc.). Isso tem prioridade sobre o
         # gatilho genérico "bones" — antes, qualquer ação de RP virava só
@@ -1218,15 +1234,94 @@ _EXPLICACOES_MATEMATICA = {
         "é multiplicar um número por ele mesmo várias vezes!! `2³` é "
         "`2 × 2 × 2 = 8`. o número de cima diz quantas vezes multiplicar!! 🦴💀"
     ),
+    "raiz quadrada": (
+        "√ **Raiz quadrada**\n"
+        "é o oposto da potência!! `√9` pergunta \"que número vezes ele mesmo "
+        "dá 9??\" — a resposta é 3, porque `3 × 3 = 9`!! 🦴💀"
+    ),
+    "bhaskara": (
+        "📐 **Fórmula de Bhaskara**\n"
+        "serve pra achar as raízes (os valores de x) de uma equação do "
+        "segundo grau, tipo `ax² + bx + c = 0`!! 🦴💀\n"
+        "primeiro calcula o discriminante: `Δ = b² - 4ac`\n"
+        "depois: `x = (-b ± √Δ) / (2a)`\n"
+        "dica: se `Δ` for negativo, a equação não tem raiz real!!"
+    ),
+    "regra de tres": (
+        "🔢 **Regra de três**\n"
+        "é um jeito de achar um valor desconhecido quando duas coisas são "
+        "proporcionais!! tipo: se 2 ossos custam 10 moedas, quanto custam "
+        "5 ossos?? monta assim:\n`2 --- 10`\n`5 --- x`\n"
+        "multiplica cruzado: `x = (5 × 10) / 2 = 25` 🦴💀"
+    ),
+    "media": (
+        "📊 **Média**\n"
+        "soma todos os valores e divide pela quantidade deles!! tipo: a "
+        "média de 4, 6 e 8 é `(4 + 6 + 8) / 3 = 6` 🦴💀"
+    ),
+    "mmc": (
+        "🔢 **MMC (Mínimo Múltiplo Comum)**\n"
+        "é o menor número que é múltiplo de dois ou mais números ao mesmo "
+        "tempo!! ex: o MMC de 4 e 6 é 12, porque é o menor número que "
+        "aparece nas duas tabuadas!! 🦴💀"
+    ),
+    "mdc": (
+        "🔢 **MDC (Máximo Divisor Comum)**\n"
+        "é o maior número que divide dois ou mais números sem deixar "
+        "resto!! ex: o MDC de 8 e 12 é 4!! 🦴💀"
+    ),
 }
 # aliases com acento apontando pro mesmo texto (aceita os dois jeitos de digitar)
 _ALIASES_EXPLICACAO = {
     "subtração": "subtracao", "multiplicação": "multiplicacao",
     "divisão": "divisao", "fração": "fracao", "área": "area",
     "perímetro": "perimetro", "potência": "potencia",
+    "baskara": "bhaskara", "formula de bhaskara": "bhaskara",
+    "formula de baskara": "bhaskara", "fórmula de bhaskara": "bhaskara",
+    "fórmula de baskara": "bhaskara", "regra de três": "regra de tres",
+    "média": "media",
 }
 for _alias, _canonico in _ALIASES_EXPLICACAO.items():
     _EXPLICACOES_MATEMATICA[_alias] = _EXPLICACOES_MATEMATICA[_canonico]
+
+
+# Padrões que reconhecem uma "pergunta de conceito" dentro da frase,
+# tipo "qual é a fórmula de baskara?", "o que é uma fração?", "explica
+# porcentagem". Cada padrão captura o assunto perguntado.
+_PADROES_PERGUNTA_CONCEITO = [
+    re.compile(r"f[oó]rmula\s+d[eo]\s+(.+)$"),
+    re.compile(r"o\s+que\s+[eé]\s+(?:um[a]?\s+)?(.+)$"),
+    re.compile(r"\bque\s+[eé]\s+(?:um[a]?\s+)?(.+)$"),
+    re.compile(r"explic[ae]r?\s+(?:o\s+que\s+[eé]\s+)?(.+)$"),
+    re.compile(r"como\s+funciona\s+(?:a|o)?\s*(.+)$"),
+    re.compile(r"como\s+(?:eu\s+)?calcul[ao]\s+(?:a|o)?\s*(.+)$"),
+]
+
+
+def _extrair_assunto_pergunta(texto: str) -> str | None:
+    """Tenta extrair o 'assunto' de uma pergunta conceitual solta na
+    frase. Devolve o assunto (limpo, minúsculo) ou None se a frase não
+    parecer esse tipo de pergunta."""
+    t = texto.strip().rstrip("?!.").lower()
+    for padrao in _PADROES_PERGUNTA_CONCEITO:
+        m = padrao.search(t)
+        if m:
+            assunto = m.group(1).strip(" ?!.")
+            assunto = re.sub(r"\bbones\b", "", assunto).strip()
+            if assunto:
+                return assunto
+    return None
+
+
+def _buscar_explicacao(assunto: str) -> str | None:
+    """Procura a explicação de um assunto, com um fallback aproximado
+    caso o texto tenha palavras extras junto do termo conhecido."""
+    if assunto in _EXPLICACOES_MATEMATICA:
+        return _EXPLICACOES_MATEMATICA[assunto]
+    for chave, texto in _EXPLICACOES_MATEMATICA.items():
+        if chave in assunto or assunto in chave:
+            return texto
+    return None
 
 
 class BonesMatematicaCog(commands.Cog, name="BonesMatematica"):
