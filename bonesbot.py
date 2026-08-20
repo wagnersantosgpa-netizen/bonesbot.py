@@ -619,6 +619,9 @@ _GIFS_BONES = [
     "https://tenor.com/view/skeleton-dancing-skeleton-dancing-gif-5094083",
     "https://tenor.com/view/skeleton-dance-fast-gif-23242269",
     "https://tenor.com/view/skeleton-dance-skeleton-skeleton-dancing-skeleton-meme-smiling-friends-gif-9010165550533699083",
+    "https://media.tenor.com/O1kfNjm2rCkAAAAM/qiwimedia-mike-wazowski.gif",
+    "https://3.bp.blogspot.com/-UxnwHhBKhvI/VVDA8cWziII/AAAAAAAAFRU/-12pMp3OYqY/s1600/gifs%2Blulz%2B(10).gif",
+    "https://68.media.tumblr.com/e1dd11cf06f8283300d03015b4e8c15c/tumblr_nws1b0jfkp1ro6cmho1_500.gif",
 ]
 
 _RESPOSTAS_GIF = [
