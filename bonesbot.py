@@ -56,13 +56,6 @@ JANELA_ENGAJAMENTO          = 300     # (segundos) considera "engajado" até 5mi
 COOLDOWN_ESPONTANEA_MIN     = 1800    # (segundos) tempo mínimo calado antes de poder reaparecer sozinho = 30min
 COOLDOWN_ESPONTANEA_MAX     = 3600    # (segundos) tempo máximo — o intervalo real sorteia entre min e max = 60min
 
-# Reconhecimento especial: o Bones "reconhece" esse usuário específico
-# e retribui de um jeito mais pessoal de vez em quando — não é sempre,
-# fica sorteado, pra não virar algo repetitivo/previsível. Troque o ID
-# abaixo se um dia precisar apontar pra outra pessoa.
-USUARIO_ESPECIAL_ID        = 1512983171808104448
-CHANCE_RECONHECER_ESPECIAL = 0.5      # chance de retribuir de forma personalizada quando aplicável
-
 # ══════════════════════════════════════════════════════════════════
 #  🤖  SETUP DO BOT
 # ══════════════════════════════════════════════════════════════════
@@ -307,64 +300,7 @@ _RESPOSTAS_SEED = {
         "quem chamou a caveirinha?? 💀",
         "cracc!! tô aqui, ossinho(a)!! 🦴💀",
     ],
-    "sua esposa te espera": [
-        "*para tudo* peraí, eu tenho ESPOSA?? desde quando?? 💀😳",
-        "*os ossinhos ficam sem jeito* ah... para... eu nem sabia que tinha casado kkkk 🦴💀",
-        "*flutua rapidinho* já, já, só terminando de assombrar por aqui!! 💀🏃",
-        "quem que inventou isso agora kkkkk mas tá, já vou!! 🦴💀",
-    ],
-    "esposa te espera": [
-        "*para tudo* peraí, eu tenho ESPOSA?? desde quando?? 💀😳",
-        "*os ossinhos ficam sem jeito* ah... para... eu nem sabia que tinha casado kkkk 🦴💀",
-        "*flutua rapidinho* já, já, só terminando de assombrar por aqui!! 💀🏃",
-    ],
-    "sua esposa": [
-        "*chacoalha confuso* minha o quê?? 💀😳",
-        "kkkkk desde quando eu tenho esposa?? mas ok, vai que cola 🦴💀",
-        "*os ossinhos tremem sem graça* n-não sei do que você tá falando kkkk 🦴💀",
-    ],
-    "minha esposa": [
-        "*se ajeita todo sem graça* ah, para... 💀🫣",
-        "*os dentinhos batem de nervoso* i-isso é sério?? kkkk 🦴💀",
-        "*flutua meio bobo* ninguém me avisou disso, viu?? kkkk 🦴💜",
-    ],
 }
-
-# ══════════════════════════════════════════════════════════════════
-#  💜  RECONHECIMENTO ESPECIAL (usuário específico)
-# ══════════════════════════════════════════════════════════════════
-
-# Gatilhos do "tema esposa" — usados só pra saber quando a resposta
-# especial abaixo pode entrar no lugar da resposta genérica.
-_GATILHOS_ESPOSA = {
-    "sua esposa te espera",
-    "esposa te espera",
-    "sua esposa",
-    "minha esposa",
-}
-
-# Respostas que só podem sair pra USUARIO_ESPECIAL_ID, quando ela usa
-# um dos gatilhos do tema "esposa" acima — o Bones retribui de um jeito
-# mais pessoal em vez da resposta genérica de confusão. Só sai ÀS VEZES
-# (ver CHANCE_RECONHECER_ESPECIAL lá em cima), não toda vez, pra não
-# ficar repetitivo/previsível.
-_RESPOSTAS_ESPOSA_ESPECIAL = [
-    "*para tudo e flutua correndo* pra você eu sempre volto correndo, viu?? 💀💜",
-    "aí sim, é você mesmo!! já tô indo, ossinha!! 🦴💜",
-    "*dá uma voltinha animada no ar* só você mesmo pra me chamar assim de volta pra casa 💀🥹",
-    "*se ajeita todo bobo* tá bom, tá bom, já cheguei!! 🦴💜",
-    "com certeza, minha ossinha favorita!! 💀✨ já tô voltando!!",
-]
-
-# Mesma ideia, mas pra quando ela chama o Bones sem nenhum gatilho
-# específico (só menção genérica) — de vez em quando ele puxa algo
-# mais pessoal em vez da resposta padrão de menção.
-_RESPOSTAS_MENCAO_ESPECIAL = [
-    "*aparece flutuando rapidinho, já sabendo quem é* oi, você!! 💀💜",
-    "*reconhece a chamada na hora* ah, é você!! sempre um prazer, ossinha!! 🦴✨",
-    "*flutua mais animado que o normal* opa, minha pessoa favorita!! diz aí!! 💀💜",
-    "cracc cracc!! você de novo?? adoro quando você aparece!! 🦴💜",
-]
 
 # ══════════════════════════════════════════════════════════════════
 #  🎭  EXPRESSÕES QUANDO É CHAMADO/MENCIONADO (sem gatilho específico)
@@ -799,6 +735,23 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
 
         chave = self._checar_gatilho(message.content)
 
+        # ── 0) Conta solta no meio da frase: "bones 1+1", "bones quanto
+        #        é 5*3", "5-2 bones" etc. Isso tem prioridade máxima —
+        #        se tem uma conta ali e o Bones foi chamado, ele calcula
+        #        na hora, sem precisar de b!conta nem de gatilho. ──────
+        if bones_mencionado:
+            conta = _detectar_conta_no_texto(message.content)
+            if conta:
+                bruta, resultado = conta
+                if isinstance(resultado, float) and resultado.is_integer():
+                    resultado = int(resultado)
+                self._ultimo_resp[message.channel.id] = now
+                self._ultima_interacao[message.channel.id] = now
+                async with message.channel.typing():
+                    await asyncio.sleep(random.uniform(0.5, 1.2))
+                await message.reply(f"🧮 `{bruta}` = **{resultado}** 🦴💀", mention_author=False)
+                return
+
         # Detecta se a mensagem é uma ação de RP ("Bones morde o vilão",
         # "Bones abraça a galera" etc.). Isso tem prioridade sobre o
         # gatilho genérico "bones" — antes, qualquer ação de RP virava só
@@ -812,18 +765,6 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         #        de fato chamado (mencionado ou em reply) ─────────
         if chave and bones_mencionado:
             resp = self._responder(chave)
-
-            # Reconhecimento especial: se for a pessoa especial e o
-            # gatilho for do tema "esposa", às vezes (não sempre) o
-            # Bones retribui com algo mais pessoal em vez da resposta
-            # genérica do gatilho.
-            if (
-                message.author.id == USUARIO_ESPECIAL_ID
-                and chave in _GATILHOS_ESPOSA
-                and random.random() < CHANCE_RECONHECER_ESPECIAL
-            ):
-                resp = random.choice(_RESPOSTAS_ESPOSA_ESPECIAL)
-
             if resp:
                 self._ultimo_resp[message.channel.id] = now
                 self._ultima_interacao[message.channel.id] = now
@@ -842,14 +783,6 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
 
             if reacao_rp:
                 await message.reply(reacao_rp, mention_author=False)
-            elif (
-                message.author.id == USUARIO_ESPECIAL_ID
-                and random.random() < CHANCE_RECONHECER_ESPECIAL
-            ):
-                # Reconhecimento especial fora do tema "esposa": de vez
-                # em quando o Bones puxa algo mais pessoal só pra ela,
-                # não é sempre, pra não ficar repetitivo.
-                await message.reply(random.choice(_RESPOSTAS_MENCAO_ESPECIAL), mention_author=False)
             else:
                 await message.reply(random.choice(_RESPOSTAS_MENCAO), mention_author=False)
             return
@@ -991,6 +924,17 @@ async def bones_help(ctx: commands.Context):
         )
     )
     embed.add_field(
+        name="🧮 Matemática",
+        inline=False,
+        value=(
+            "aprendi conta também!! várias formas de aprender comigo 💀\n\n"
+            "`b!conta <expressão>` — calculo na hora, tipo `b!conta (4+2)*3`\n"
+            "`b!tabuada <número>` — mostro a tabuada completa\n"
+            "`b!explicar <tópico>` — explico soma, fração, porcentagem etc.\n"
+            "`b!quiz [facil|medio|dificil]` — te desafio com uma conta!!"
+        )
+    )
+    embed.add_field(
         name="🦴 Geral",
         inline=False,
         value=(
@@ -1032,12 +976,261 @@ async def bones_info(ctx: commands.Context):
 
 
 # ══════════════════════════════════════════════════════════════════
+#  🧮  MÓDULO DE MATEMÁTICA DO BONES
+#      (calculadora, tabuada, quiz e explicações — várias formas
+#       de "ensinar" matemática pro Bones e pra galera)
+# ══════════════════════════════════════════════════════════════════
+
+import ast
+import operator
+
+_OPERADORES_PERMITIDOS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+    ast.Pow: operator.pow,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+
+def _avaliar_expressao(expr: str) -> float:
+    """Avalia uma expressão matemática com segurança, sem usar eval()."""
+
+    def _eval(node):
+        if isinstance(node, ast.Constant):
+            if isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
+                return node.value
+            raise ValueError("valor inválido")
+        if isinstance(node, ast.BinOp):
+            op_tipo = type(node.op)
+            if op_tipo not in _OPERADORES_PERMITIDOS:
+                raise ValueError("operador não suportado")
+            return _OPERADORES_PERMITIDOS[op_tipo](_eval(node.left), _eval(node.right))
+        if isinstance(node, ast.UnaryOp):
+            op_tipo = type(node.op)
+            if op_tipo not in _OPERADORES_PERMITIDOS:
+                raise ValueError("operador não suportado")
+            return _OPERADORES_PERMITIDOS[op_tipo](_eval(node.operand))
+        raise ValueError("expressão inválida")
+
+    arvore = ast.parse(expr, mode="eval")
+    return _eval(arvore.body)
+
+
+# Reconhece uma conta solta em qualquer lugar da frase, tipo "bones 1+1"
+# ou "quanto é 5*3 bones". Exige pelo menos um número, um operador e
+# outro número — assim "top 10" ou um ID qualquer não vira conta à toa.
+# Aceita x/X/× como multiplicação e ÷ como divisão, além de */+/-//.
+_PADRAO_EXPRESSAO_MATEMATICA = re.compile(
+    r"(?<![\w.,])(-?\d+(?:[.,]\d+)?(?:\s*[+\-xX×*/÷]\s*-?\d+(?:[.,]\d+)?)+)(?![\w.,])"
+)
+
+
+def _detectar_conta_no_texto(texto: str) -> tuple[str, float] | None:
+    """Procura uma conta solta no meio da frase. Devolve (expressão
+    original, resultado) ou None se não achar nada parecido com conta."""
+    m = _PADRAO_EXPRESSAO_MATEMATICA.search(texto)
+    if not m:
+        return None
+    bruta = m.group(1).strip()
+    normalizada = bruta.replace("x", "*").replace("X", "*").replace("×", "*").replace("÷", "/")
+    normalizada = re.sub(r"(\d),(\d)", r"\1.\2", normalizada)  # vírgula decimal → ponto
+    try:
+        resultado = _avaliar_expressao(normalizada)
+    except (ValueError, SyntaxError, ZeroDivisionError, TypeError):
+        return None
+    return bruta, resultado
+
+
+_EXPLICACOES_MATEMATICA = {
+    "soma": (
+        "➕ **Soma**\n"
+        "é juntar quantidades!! tipo empilhar ossinhos: se eu tenho 3 e acho "
+        "mais 2, fico com 5 no total!!\n`3 + 2 = 5` 🦴💀\n"
+        "dica: dá pra somar em qualquer ordem, `3 + 2` é igual a `2 + 3`!!"
+    ),
+    "subtracao": (
+        "➖ **Subtração**\n"
+        "é tirar uma quantidade de outra. se eu tenho 5 ossinhos e perco 2, "
+        "fico só com 3!!\n`5 - 2 = 3` 🦴💀\n"
+        "dica: aqui a ordem importa! `5 - 2` não é igual a `2 - 5`!!"
+    ),
+    "multiplicacao": (
+        "✖️ **Multiplicação**\n"
+        "é somar a mesma quantidade várias vezes!! `4 × 3` é o mesmo que "
+        "`4 + 4 + 4`, que dá 12!! 🦴💀\n"
+        "dica: pensa em grupos! 3 grupos de 4 ossinhos cada!!"
+    ),
+    "divisao": (
+        "➗ **Divisão**\n"
+        "é repartir uma quantidade em partes iguais!! se eu tenho 12 ossinhos "
+        "e quero dividir entre 3 amigos, cada um fica com 4!!\n`12 ÷ 3 = 4` 🦴💀"
+    ),
+    "fracao": (
+        "🍕 **Fração**\n"
+        "representa uma parte de um todo!! tipo `1/2` é metade de alguma "
+        "coisa — se eu quebro um osso em 2 pedaços iguais e pego 1, tenho "
+        "`1/2` do osso!! 🦴💀\no número de cima (numerador) diz quantas "
+        "partes você tem, o de baixo (denominador) diz em quantas partes o "
+        "todo foi dividido."
+    ),
+    "porcentagem": (
+        "💯 **Porcentagem**\n"
+        "é uma fração de 100!! `50%` é o mesmo que `50/100`, ou seja, "
+        "metade!! 🦴💀\npra calcular X% de um número: `(X ÷ 100) × número`.\n"
+        "ex: 20% de 50 = `(20 ÷ 100) × 50 = 10`"
+    ),
+    "area": (
+        "📐 **Área**\n"
+        "é o espaço que uma figura ocupa!! pra um retângulo: "
+        "`área = largura × altura`. 🦴💀\n"
+        "ex: um retângulo de 4 por 3 tem área `4 × 3 = 12`."
+    ),
+    "perimetro": (
+        "📏 **Perímetro**\n"
+        "é a soma de todos os lados de uma figura!! pra um retângulo: "
+        "`perímetro = 2 × (largura + altura)`. 🦴💀"
+    ),
+    "potencia": (
+        "🔺 **Potência**\n"
+        "é multiplicar um número por ele mesmo várias vezes!! `2³` é "
+        "`2 × 2 × 2 = 8`. o número de cima diz quantas vezes multiplicar!! 🦴💀"
+    ),
+}
+# aliases com acento apontando pro mesmo texto (aceita os dois jeitos de digitar)
+_ALIASES_EXPLICACAO = {
+    "subtração": "subtracao", "multiplicação": "multiplicacao",
+    "divisão": "divisao", "fração": "fracao", "área": "area",
+    "perímetro": "perimetro", "potência": "potencia",
+}
+for _alias, _canonico in _ALIASES_EXPLICACAO.items():
+    _EXPLICACOES_MATEMATICA[_alias] = _EXPLICACOES_MATEMATICA[_canonico]
+
+
+class BonesMatematicaCog(commands.Cog, name="BonesMatematica"):
+    """🧮 Módulo de matemática do Bones — calculadora, tabuada, quiz e explicações."""
+
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+    @commands.command(name="conta", aliases=["calcular", "calc"])
+    async def conta(self, ctx: commands.Context, *, expressao: str):
+        """Calcula uma expressão matemática. Uso: b!conta 2 + 2 * 5"""
+        try:
+            resultado = _avaliar_expressao(expressao)
+            if isinstance(resultado, float) and resultado.is_integer():
+                resultado = int(resultado)
+            await ctx.send(embed=_embed_ok(
+                "🧮 Conta feita!!",
+                f"`{expressao}` = **{resultado}** 🦴💀"
+            ))
+        except ZeroDivisionError:
+            await ctx.send(embed=_embed_erro(
+                "não dá pra dividir por zero, ossinho(a)!! nem os ossos aguentam essa 💀"
+            ))
+        except Exception:
+            await ctx.send(embed=_embed_erro(
+                "não consegui entender essa conta!! 💀\n"
+                "usa só números e `+ - * / ** ( )`, tipo: `b!conta (4 + 2) * 3`"
+            ))
+
+    @commands.command(name="tabuada")
+    async def tabuada(self, ctx: commands.Context, numero: int):
+        """Mostra a tabuada de um número. Uso: b!tabuada 7"""
+        if not (0 <= numero <= 100):
+            await ctx.send(embed=_embed_erro("escolhe um número entre 0 e 100, ossinho(a)!! 💀"))
+            return
+        linhas = [f"{numero} × {i} = {numero * i}" for i in range(1, 11)]
+        await ctx.send(embed=_embed_info(f"🦴 Tabuada do {numero}", "\n".join(linhas)))
+
+    @commands.command(name="explicar", aliases=["explica"])
+    async def explicar(self, ctx: commands.Context, *, topico: str):
+        """Explica um conceito de matemática. Uso: b!explicar fração"""
+        chave = topico.lower().strip()
+        explicacao = _EXPLICACOES_MATEMATICA.get(chave)
+        if not explicacao:
+            disponiveis = ", ".join(f"`{k}`" for k in [
+                "soma", "subtração", "multiplicação", "divisão", "fração",
+                "porcentagem", "área", "perímetro", "potência"
+            ])
+            await ctx.send(embed=_embed_erro(
+                f"ainda não sei explicar `{chave}`!! 💀\ntópicos que sei: {disponiveis}"
+            ))
+            return
+        await ctx.send(embed=_embed_info("🧮 Aula do Bones", explicacao))
+
+    @commands.command(name="quiz", aliases=["quizmath", "desafio"])
+    async def quiz(self, ctx: commands.Context, dificuldade: str = "facil"):
+        """Bones te desafia com uma conta pra resolver. Uso: b!quiz [facil|medio|dificil]"""
+        dificuldade = dificuldade.lower().strip()
+        faixas = {
+            "facil": (1, 10, ["+", "-"]),
+            "medio": (1, 50, ["+", "-", "*"]),
+            "dificil": (2, 12, ["*", "/"]),
+        }
+        if dificuldade not in faixas:
+            await ctx.send(embed=_embed_erro("dificuldade inválida!! usa `facil`, `medio` ou `dificil` 💀"))
+            return
+
+        minimo, maximo, ops = faixas[dificuldade]
+        a = random.randint(minimo, maximo)
+        b = random.randint(minimo, maximo)
+        op = random.choice(ops)
+
+        if op == "/":
+            # garante divisão exata pra não complicar
+            b = random.randint(2, 12)
+            a = b * random.randint(2, 12)
+            resultado = a // b
+        elif op == "*":
+            resultado = a * b
+        elif op == "+":
+            resultado = a + b
+        else:
+            if a < b:
+                a, b = b, a
+            resultado = a - b
+
+        await ctx.send(embed=_embed_info(
+            "🧮 Desafio do Bones!!",
+            f"quanto é `{a} {op} {b}`??\nresponde aqui em até 20 segundos!! 💀🦴"
+        ))
+
+        def checar(m: discord.Message) -> bool:
+            return m.channel.id == ctx.channel.id and m.author.id == ctx.author.id
+
+        try:
+            resposta_msg = await self.bot.wait_for("message", check=checar, timeout=20.0)
+        except asyncio.TimeoutError:
+            await ctx.send(embed=_embed_erro(f"o tempo acabou!! a resposta era **{resultado}** 💀⏰"))
+            return
+
+        try:
+            valor_dado = float(resposta_msg.content.strip().replace(",", "."))
+        except ValueError:
+            await ctx.send(embed=_embed_erro(f"isso nem número é!! a resposta era **{resultado}** 💀"))
+            return
+
+        if valor_dado == resultado:
+            await ctx.send(embed=_embed_ok(
+                "🎉 Acertou!!", f"isso aí, ossinho(a)!! **{resultado}** tá certinho!! 🦴💀✨"
+            ))
+        else:
+            await ctx.send(embed=_embed_erro(f"quase!! a resposta certa era **{resultado}** 💀"))
+
+
+# ══════════════════════════════════════════════════════════════════
 #  🚀  INICIALIZAÇÃO
 # ══════════════════════════════════════════════════════════════════
 
 async def _main():
     async with bot:
         await bot.add_cog(BonesDialogoCog(bot))
+        await bot.add_cog(BonesMatematicaCog(bot))
 
         if not TOKEN:
             print("❌ ERRO: token não encontrado! Crie um .env com BONES_TOKEN=seu_token")
