@@ -743,13 +743,17 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
             conta = _detectar_conta_no_texto(message.content)
             if conta:
                 bruta, resultado = conta
-                if isinstance(resultado, float) and resultado.is_integer():
-                    resultado = int(resultado)
                 self._ultimo_resp[message.channel.id] = now
                 self._ultima_interacao[message.channel.id] = now
                 async with message.channel.typing():
                     await asyncio.sleep(random.uniform(0.5, 1.2))
-                await message.reply(f"🧮 `{bruta}` = **{resultado}** 🦴💀", mention_author=False)
+                if resultado is _DIVISAO_POR_ZERO:
+                    resp = random.choice(_RESPOSTAS_CONTA_ZERO).format(bruta=bruta)
+                else:
+                    if isinstance(resultado, float) and resultado.is_integer():
+                        resultado = int(resultado)
+                    resp = random.choice(_RESPOSTAS_CONTA_NATURAL).format(bruta=bruta, resultado=resultado)
+                await message.reply(resp, mention_author=False)
                 return
 
         # Detecta se a mensagem é uma ação de RP ("Bones morde o vilão",
@@ -1030,9 +1034,17 @@ _PADRAO_EXPRESSAO_MATEMATICA = re.compile(
 )
 
 
+# Marcador especial pra dizer "essa conta tentou dividir por zero" sem
+# precisar propagar a exceção lá pro on_message — assim dá pra tratar
+# com uma fala engraçada em vez de só ignorar a mensagem.
+_DIVISAO_POR_ZERO = object()
+
+
 def _detectar_conta_no_texto(texto: str) -> tuple[str, float] | None:
     """Procura uma conta solta no meio da frase. Devolve (expressão
-    original, resultado) ou None se não achar nada parecido com conta."""
+    original, resultado) ou None se não achar nada parecido com conta.
+    Se a conta tentar dividir por zero, o resultado vem como
+    _DIVISAO_POR_ZERO em vez de lançar exceção."""
     m = _PADRAO_EXPRESSAO_MATEMATICA.search(texto)
     if not m:
         return None
@@ -1041,9 +1053,32 @@ def _detectar_conta_no_texto(texto: str) -> tuple[str, float] | None:
     normalizada = re.sub(r"(\d),(\d)", r"\1.\2", normalizada)  # vírgula decimal → ponto
     try:
         resultado = _avaliar_expressao(normalizada)
-    except (ValueError, SyntaxError, ZeroDivisionError, TypeError):
+    except ZeroDivisionError:
+        return bruta, _DIVISAO_POR_ZERO
+    except (ValueError, SyntaxError, TypeError):
         return None
     return bruta, resultado
+
+
+# Várias falas diferentes pra quando o Bones calcula uma conta solta na
+# conversa — assim ele não fica repetindo sempre o mesmo formato seco.
+_RESPOSTAS_CONTA_NATURAL = [
+    "*conta nos ossinhos dos dedos* `{bruta}`?? deixa eu ver... dá **{resultado}**!! 🦴💀",
+    "clack clack!! `{bruta}` = **{resultado}**, ossinho(a)!! 🧮💀",
+    "*flutua até o quadro-negro imaginário e escreve* `{bruta}` = **{resultado}**!! 💀✏️",
+    "peraí, deixa eu usar os miolos... ah, esqueci que não tenho kkkk mas `{bruta}` dá **{resultado}**!! 🦴😆",
+    "fácil!! `{bruta}` = **{resultado}** 💀🧮 quer outra conta??",
+    "*balança a caveira concentrado* `{bruta}`... **{resultado}**!! acertei igual sempre 🦴✨",
+    "opa, conta na área!! `{bruta}` = **{resultado}**, ossinho(a)!! 💀🦴",
+    "*estala os dedos ósseos* na moral, `{bruta}` é **{resultado}**!! 🦴💀",
+]
+
+# Falas especiais pra quando alguém tenta fazer o Bones dividir por zero.
+_RESPOSTAS_CONTA_ZERO = [
+    "ei ei, `{bruta}`?? isso é dividir por zero!! nem os ossos aguentam essa 😱💀",
+    "*os ossinhos tremem* dividir por zero não rola, ossinho(a)!! o universo (e o Bones) explode 💀💥",
+    "kkkkk boa tentativa, mas `{bruta}` é impossível!! divisão por zero não existe por aqui 🦴🚫",
+]
 
 
 _EXPLICACOES_MATEMATICA = {
@@ -1126,11 +1161,11 @@ class BonesMatematicaCog(commands.Cog, name="BonesMatematica"):
                 resultado = int(resultado)
             await ctx.send(embed=_embed_ok(
                 "🧮 Conta feita!!",
-                f"`{expressao}` = **{resultado}** 🦴💀"
+                random.choice(_RESPOSTAS_CONTA_NATURAL).format(bruta=expressao, resultado=resultado)
             ))
         except ZeroDivisionError:
             await ctx.send(embed=_embed_erro(
-                "não dá pra dividir por zero, ossinho(a)!! nem os ossos aguentam essa 💀"
+                random.choice(_RESPOSTAS_CONTA_ZERO).format(bruta=expressao)
             ))
         except Exception:
             await ctx.send(embed=_embed_erro(
