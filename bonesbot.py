@@ -600,13 +600,25 @@ for _frase_piada in (
 #  🎞️  GIFS DO BONES
 #      Usados quando alguém pede um gif ou quando rola um gif no chat
 #      (aí o Bones entra na brincadeira com um dele também).
+#
+#      OBS: antes essa lista usava links do tipo
+#      "encrypted-tbn0.gstatic.com/images?q=tbn:..." — esses são links
+#      de MINIATURA do cache de imagens do Google, não do gif de
+#      verdade. Por isso apareciam estáticos: nunca foram um gif
+#      animado, sempre foram uma fotinho estática do resultado de
+#      busca. Trocado por links de página do Tenor (tenor.com/view/...),
+#      que o Discord reconhece e renderiza como gif animado de verdade.
 # ══════════════════════════════════════════════════════════════════
 
 _GIFS_BONES = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9OJHHrBTySwUCADGoKLm3uWXSGzZVWT8FJcTqXHwXqA&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuH9FaEYkSAXwe4XSGXMNYc6ZK1BYQwfKB85W_i7vFUA&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF3Z61-dY6Eh4twNOeZ-jsdF-BfQNhhYTYNrG-bG5sfQ&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOPAKm4jo2MXJORYNpsEPVfkRKUpG8jbOk8DZH3-WucA&s=10",
+    "https://tenor.com/en-GB/view/skeleton-dance-dancing-gif-10430058",
+    "https://tenor.com/view/skeleton-dancing-cartoon-skeletons-gif-5474567",
+    "https://tenor.com/view/skeleton-dancing-dance-turn-up-lit-gif-5623073",
+    "https://tenor.com/view/dancing-skeleton-gif-9517238",
+    "https://tenor.com/view/skeleton-dancing-animation-gif-7794277",
+    "https://tenor.com/view/skeleton-dancing-skeleton-dancing-gif-5094083",
+    "https://tenor.com/view/skeleton-dance-fast-gif-23242269",
+    "https://tenor.com/view/skeleton-dance-skeleton-skeleton-dancing-skeleton-meme-smiling-friends-gif-9010165550533699083",
 ]
 
 _RESPOSTAS_GIF = [
