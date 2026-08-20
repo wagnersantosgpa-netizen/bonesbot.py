@@ -597,6 +597,36 @@ for _frase_piada in (
     _RESPOSTAS_SEED[_frase_piada] = list(_PIADAS_OSSOS)
 
 # ══════════════════════════════════════════════════════════════════
+#  🎞️  GIFS DO BONES
+#      Usados quando alguém pede um gif ou quando rola um gif no chat
+#      (aí o Bones entra na brincadeira com um dele também).
+# ══════════════════════════════════════════════════════════════════
+
+_GIFS_BONES = [
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9OJHHrBTySwUCADGoKLm3uWXSGzZVWT8FJcTqXHwXqA&s=10",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuH9FaEYkSAXwe4XSGXMNYc6ZK1BYQwfKB85W_i7vFUA&s=10",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF3Z61-dY6Eh4twNOeZ-jsdF-BfQNhhYTYNrG-bG5sfQ&s=10",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOPAKm4jo2MXJORYNpsEPVfkRKUpG8jbOk8DZH3-WucA&s=10",
+]
+
+_RESPOSTAS_GIF = [
+    "toma um gif, ossinho(a)!! 🦴🎞️",
+    "*flutua e solta um gif do nada* 💀🎬",
+    "gif liberado!! aqui óh 🦴✨",
+    "peguei um da minha coleção de ossos... quer dizer, de gifs 💀😆",
+    "clack clack!! segue o gif 🦴🎞️",
+    "entrando na moda dos gifs também!! 💀🎬",
+    "*procura na gaveta de ossos e acha um gif* achei um!! 🦴💀",
+]
+
+# Quando ninguém chamou o Bones mas alguém posta/pede um gif no chat,
+# ele tem uma chance de "reagir" entrando na brincadeira com um gif
+# dele também — não é sempre, senão vira spam. Se ele FOR chamado
+# (@Bones ou "bones" no texto), a reação é sempre garantida.
+CHANCE_REACAO_GIF = 0.25       # chance por gif/pedido, sem ser chamado
+COOLDOWN_REACAO_GIF = 20       # (segundos) intervalo mínimo entre reações a gif no mesmo canal
+
+# ══════════════════════════════════════════════════════════════════
 #  🖼️  HELPERS DE EMBED
 # ══════════════════════════════════════════════════════════════════
 
@@ -640,8 +670,31 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
         # Última vez que alguém interagiu diretamente com o Bones em cada canal
         # (gatilho respondido ou menção) — usado pra saber se o canal tá "engajado"
         self._ultima_interacao: dict[int, datetime] = {}
+        # Última vez que o Bones reagiu com um gif em cada canal (evita
+        # ele jogar gif toda hora quando ninguém chamou ele diretamente)
+        self._ultima_reacao_gif: dict[int, datetime] = {}
 
     # ── Helpers internos ──────────────────────────────
+
+    def _contem_gif(self, message: discord.Message) -> bool:
+        """Verifica se a mensagem 'tem a ver com gif' — seja um gif de
+        verdade anexado/linkado, seja só a palavra 'gif' escrita (um
+        pedido, tipo 'bones manda um gif')."""
+        for anexo in message.attachments:
+            if anexo.filename.lower().endswith(".gif") or (
+                anexo.content_type and "gif" in anexo.content_type
+            ):
+                return True
+        texto = message.content.lower()
+        return "gif" in texto or "tenor.com" in texto or "giphy.com" in texto
+
+    def _pode_reagir_gif(self, channel_id: int, now: datetime) -> bool:
+        """Decide se o Bones reage a um gif quando NÃO foi chamado —
+        chance + cooldown, pra não virar spam de gif no canal."""
+        if random.random() >= CHANCE_REACAO_GIF:
+            return False
+        ultima = self._ultima_reacao_gif.get(channel_id)
+        return not ultima or (now - ultima).total_seconds() > COOLDOWN_REACAO_GIF
 
     def _checar_gatilho(self, texto: str) -> str | None:
         texto_lower = texto.lower().strip()
@@ -754,6 +807,28 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
                         resultado = int(resultado)
                     resp = random.choice(_RESPOSTAS_CONTA_NATURAL).format(bruta=bruta, resultado=resultado)
                 await message.reply(resp, mention_author=False)
+                return
+
+        # ── 0.5) Gif: alguém pediu um gif ("bones manda um gif") ou
+        #        postou/linkou um gif no chat. Se o Bones foi chamado,
+        #        ele SEMPRE entra na brincadeira; se não foi chamado,
+        #        tem uma chance (+ cooldown) de reagir por conta própria,
+        #        pra não virar spam de gif no canal toda hora. ─────────
+        if self._contem_gif(message):
+            reagir = bones_mencionado or self._pode_reagir_gif(message.channel.id, now)
+            if reagir:
+                self._ultimo_resp[message.channel.id] = now
+                if bones_mencionado:
+                    self._ultima_interacao[message.channel.id] = now
+                else:
+                    self._ultima_reacao_gif[message.channel.id] = now
+                async with message.channel.typing():
+                    await asyncio.sleep(random.uniform(0.4, 1.0))
+                conteudo = f"{random.choice(_RESPOSTAS_GIF)}\n{random.choice(_GIFS_BONES)}"
+                if bones_mencionado:
+                    await message.reply(conteudo, mention_author=False)
+                else:
+                    await message.channel.send(conteudo)
                 return
 
         # Detecta se a mensagem é uma ação de RP ("Bones morde o vilão",
@@ -880,6 +955,13 @@ class BonesDialogoCog(commands.Cog, name="BonesDialogo"):
             await asyncio.sleep(random.uniform(0.5, 1.0))
         await ctx.send(random.choice(_PIADAS_OSSOS))
 
+    @commands.command(name="gif")
+    async def gif(self, ctx: commands.Context):
+        """Manda um gif aleatório do Bones. Uso: b!gif"""
+        async with ctx.channel.typing():
+            await asyncio.sleep(random.uniform(0.4, 1.0))
+        await ctx.send(f"{random.choice(_RESPOSTAS_GIF)}\n{random.choice(_GIFS_BONES)}")
+
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -944,6 +1026,7 @@ async def bones_help(ctx: commands.Context):
         value=(
             "`b!bones` — sobre mim\n"
             "`b!piada` — solto uma piada de ossos na hora\n"
+            "`b!gif` — mando um gif aleatório meu\n"
             "`b!ping` — testa minha latência"
         )
     )
